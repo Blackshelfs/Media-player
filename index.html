@@ -18,10 +18,10 @@
                     colors: {
                         brand: {
                             red: '#E50914',
-                            dark: '#0B0B0C',
-                            card: '#141416',
-                            border: '#26262A',
-                            hover: '#1D1D21'
+                            dark: '#070708',
+                            card: '#121215',
+                            border: '#1F1F24',
+                            hover: '#1A1A1E'
                         }
                     },
                     fontFamily: {
@@ -33,56 +33,56 @@
     </script>
     <style>
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0B0B0C; }
-        ::-webkit-scrollbar-thumb { background: #26262A; border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: #070708; }
+        ::-webkit-scrollbar-thumb { background: #1F1F24; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #E50914; }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-red selection:text-white">
 
     <!-- Header & Navigation -->
-    <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-xl border-b border-brand-border/60 px-4 sm:px-8 py-3.5">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+    <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-xl border-b border-brand-border/80 px-4 sm:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             
             <!-- Brand Logo -->
-            <div class="flex items-center space-x-2.5 cursor-pointer group" onclick="resetToHome()">
-                <div class="bg-brand-red p-2 rounded-lg shadow-lg shadow-brand-red/20 group-hover:scale-105 transition-transform duration-200">
+            <div class="flex items-center space-x-3 cursor-pointer group" onclick="resetToHome()">
+                <div class="bg-brand-red p-2.5 rounded-xl shadow-lg shadow-brand-red/30 group-hover:scale-105 transition-transform duration-200">
                     <i class="fa-solid fa-play text-sm text-white"></i>
                 </div>
-                <span class="text-xl font-extrabold tracking-wider text-white">CINE<span class="text-brand-red">STREAM</span></span>
+                <span class="text-xl font-black tracking-wider text-white">CINE<span class="text-brand-red">STREAM</span></span>
             </div>
 
             <!-- Search & Direct ID Bar -->
-            <div class="flex items-center gap-2 w-full md:w-auto flex-1 max-w-2xl justify-end">
+            <div class="flex items-center gap-2.5 w-full md:w-auto flex-1 max-w-2xl justify-end">
                 <form id="search-form" class="relative flex-1 max-w-md">
                     <div class="relative flex items-center">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-gray-500 text-xs"></i>
                         <input 
                             type="text" 
                             id="search-input" 
-                            placeholder="Search catalog or ID..." 
-                            class="w-full bg-brand-card text-gray-200 text-xs rounded-lg pl-9 pr-8 py-2.5 border border-brand-border focus:outline-none focus:border-brand-red transition-colors placeholder-gray-500"
+                            placeholder="Search catalog by title..." 
+                            class="w-full bg-brand-card text-gray-200 text-xs rounded-xl pl-10 pr-8 py-3 border border-brand-border focus:outline-none focus:border-brand-red transition-all placeholder-gray-500 shadow-inner"
                             autocomplete="off"
                         >
-                        <button type="button" id="clear-search" class="hidden absolute right-3 text-gray-500 hover:text-white text-xs">
+                        <button type="button" id="clear-search" class="hidden absolute right-3.5 text-gray-500 hover:text-white text-xs">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 </form>
 
                 <!-- Direct ID Input -->
-                <div class="flex items-center space-x-1.5">
+                <div class="flex items-center space-x-2">
                     <input 
                         type="text" 
                         id="direct-id-input" 
                         placeholder="TMDB ID..." 
-                        class="bg-brand-card text-xs text-gray-200 px-3 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-red w-28 sm:w-32"
+                        class="bg-brand-card text-xs text-gray-200 px-3.5 py-3 rounded-xl border border-brand-border focus:outline-none focus:border-brand-red w-28 sm:w-32 shadow-inner"
                     >
                     <button 
                         onclick="playDirectId()" 
-                        class="bg-brand-red hover:bg-red-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-lg transition-colors flex items-center gap-1 shadow-md whitespace-nowrap"
+                        class="bg-brand-red hover:bg-red-700 text-white font-bold text-xs px-4 py-3 rounded-xl transition-all shadow-md shadow-brand-red/20 whitespace-nowrap flex items-center gap-1.5"
                     >
-                        <i class="fa-solid fa-play text-[10px]"></i> Direct Play
+                        <i class="fa-solid fa-play text-[10px]"></i> Play
                     </button>
                 </div>
             </div>
@@ -91,54 +91,60 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-6">
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-8">
         
         <!-- Status Header -->
-        <div class="flex items-center justify-between mb-6 pb-3 border-b border-brand-border/40">
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-brand-border/60">
             <div>
-                <h1 id="section-title" class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                <h1 id="section-title" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
                     Featured Collection
                 </h1>
+                <p class="text-xs text-gray-500 mt-0.5">Your personal curated library of cinematic masterpieces</p>
             </div>
-            <div id="result-count" class="text-[11px] font-medium px-2.5 py-0.5 bg-brand-card text-gray-400 rounded-md border border-brand-border">
+            <div id="result-count" class="text-[11px] font-semibold px-3 py-1 bg-brand-card text-gray-400 rounded-lg border border-brand-border">
                 Ready
             </div>
         </div>
 
         <!-- Movie Grid Container -->
-        <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
+        <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
             <!-- Rendered dynamically -->
         </div>
 
         <!-- Empty State -->
         <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
-            <div class="w-16 h-16 bg-brand-card rounded-full flex items-center justify-center mb-3 text-gray-600 text-2xl border border-brand-border">
+            <div class="w-16 h-16 bg-brand-card rounded-full flex items-center justify-center mb-3 text-gray-600 text-2xl border border-brand-border shadow-inner">
                 <i class="fa-solid fa-film"></i>
             </div>
             <h3 class="text-lg font-bold text-gray-300">No Movies Found</h3>
-            <p class="text-gray-500 text-xs max-w-xs mt-1">Try searching for popular titles or pass a valid movie ID.</p>
+            <p class="text-gray-500 text-xs max-w-xs mt-1">Try searching for another title or use a valid TMDB ID.</p>
         </div>
 
     </main>
 
+    <!-- Footer -->
+    <footer class="border-t border-brand-border/80 bg-brand-dark py-6 px-4 sm:px-8 text-center text-xs text-gray-600">
+        <p>&copy; CineStream Personal Cinema. Built for high-speed streaming.</p>
+    </footer>
+
     <!-- Movie Player Modal -->
-    <div id="movie-modal" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
-        <div class="relative bg-brand-card w-full max-w-5xl rounded-xl overflow-hidden shadow-2xl border border-brand-border my-auto flex flex-col">
+    <div id="movie-modal" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-2xl flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+        <div class="relative bg-brand-card w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl border border-brand-border my-auto flex flex-col">
             
             <!-- Minimal Modal Header -->
-            <div class="flex items-center justify-between px-5 py-3 border-b border-brand-border bg-black/50">
-                <div class="flex items-center space-x-2.5">
-                    <span class="w-2 h-2 rounded-full bg-brand-red animate-pulse"></span>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-brand-border bg-black/40">
+                <div class="flex items-center space-x-3">
+                    <span class="w-2.5 h-2.5 rounded-full bg-brand-red animate-pulse shadow-lg shadow-brand-red"></span>
                     <h2 id="modal-title" class="text-base sm:text-lg font-bold text-white truncate max-w-md">Movie Title</h2>
                 </div>
                 
-                <button id="close-modal" onclick="closeModal()" class="w-8 h-8 bg-brand-border/40 hover:bg-brand-red text-gray-400 hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                <button id="close-modal" onclick="closeModal()" class="w-9 h-9 bg-brand-border/40 hover:bg-brand-red text-gray-400 hover:text-white rounded-xl flex items-center justify-center transition-colors">
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
 
             <!-- Video Player Frame -->
-            <div class="relative w-full aspect-video bg-black flex items-center justify-center">
+            <div class="relative w-full aspect-video bg-black flex items-center justify-center shadow-2xl">
                 <iframe 
                     id="stream-iframe" 
                     class="w-full h-full border-0" 
@@ -148,11 +154,11 @@
             </div>
 
             <!-- Compact Movie Metadata -->
-            <div class="p-5 bg-brand-card">
-                <div class="flex items-center gap-2.5 text-xs text-gray-400 mb-1.5">
+            <div class="p-6 bg-brand-card">
+                <div class="flex items-center gap-3 text-xs text-gray-400 mb-2">
                     <span id="modal-year" class="font-bold text-gray-200">Year</span>
                     <span>&bull;</span>
-                    <span id="modal-imdb-id" class="bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded text-[11px] font-mono border border-amber-500/20">ID</span>
+                    <span id="modal-imdb-id" class="bg-amber-500/10 text-amber-400 px-2.5 py-0.5 rounded text-[11px] font-mono border border-amber-500/20 font-semibold">ID</span>
                 </div>
                 <p id="modal-overview" class="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-3xl">
                     Overview...
@@ -166,16 +172,6 @@
     <script>
         const CATALOG_MOVIES = [
             {
-                id: "tt1675434",
-                tmdb_id: "77338",
-                title: "The Intouchables",
-                release_date: "2011-11-02",
-                vote_average: 8.5,
-                poster_path: "https://image.tmdb.org/t/p/w500/34m2tyg32R2P9L3R3391pB0mC6Z.jpg",
-                overview: "After he becomes a quadriplegic from a paragliding accident, an aristocrat hires a young man from the projects to be his caregiver."
-            },
-            {
-                id: "tt0816692",
                 tmdb_id: "157336",
                 title: "Interstellar",
                 release_date: "2014-11-07",
@@ -184,25 +180,6 @@
                 overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
             },
             {
-                id: "tt0094226",
-                tmdb_id: "11782",
-                title: "The Untouchables",
-                release_date: "1987-06-03",
-                vote_average: 7.9,
-                poster_path: "https://image.tmdb.org/t/p/w500/A8114oN09A7P43v1k2R8xW4s6K1.jpg",
-                overview: "Federal Agent Eliot Ness sets out to stop ruthless Chicago gangster Al Capone, assembling a small team of trustworthy officers to help him."
-            },
-            {
-                id: "tt1300854",
-                tmdb_id: "68721",
-                title: "Iron Man 3",
-                release_date: "2013-05-03",
-                vote_average: 7.1,
-                poster_path: "https://image.tmdb.org/t/p/w500/qhPtL1nHC138vFi2yA9A8pC6k.jpg",
-                overview: "When Tony Stark's world is torn apart by a formidable terrorist called the Mandarin, he starts an odyssey of rebuilding and retribution."
-            },
-            {
-                id: "tt1375666",
                 tmdb_id: "27205",
                 title: "Inception",
                 release_date: "2010-07-16",
@@ -211,7 +188,6 @@
                 overview: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O."
             },
             {
-                id: "tt0468569",
                 tmdb_id: "155",
                 title: "The Dark Knight",
                 release_date: "2008-07-18",
@@ -220,7 +196,6 @@
                 overview: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological tests."
             },
             {
-                id: "tt4154796",
                 tmdb_id: "299534",
                 title: "Avengers: Endgame",
                 release_date: "2019-04-26",
@@ -229,13 +204,52 @@
                 overview: "After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more."
             },
             {
-                id: "tt0110912",
                 tmdb_id: "680",
                 title: "Pulp Fiction",
                 release_date: "1994-10-14",
                 vote_average: 8.5,
                 poster_path: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
                 overview: "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption."
+            },
+            {
+                tmdb_id: "77338",
+                title: "The Intouchables",
+                release_date: "2011-11-02",
+                vote_average: 8.5,
+                poster_path: "https://image.tmdb.org/t/p/w500/34m2tyg32R2P9L3R3391pB0mC6Z.jpg",
+                overview: "After he becomes a quadriplegic from a paragliding accident, an aristocrat hires a young man from the projects to be his caregiver."
+            },
+            {
+                tmdb_id: "68721",
+                title: "Iron Man 3",
+                release_date: "2013-05-03",
+                vote_average: 7.1,
+                poster_path: "https://image.tmdb.org/t/p/w500/qhPtL1nHC138vFi2yA9A8pC6k.jpg",
+                overview: "When Tony Stark's world is torn apart by a formidable terrorist called the Mandarin, he starts an odyssey of rebuilding and retribution."
+            },
+            {
+                tmdb_id: "13",
+                title: "Forrest Gump",
+                release_date: "1994-07-06",
+                vote_average: 8.5,
+                poster_path: "https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg",
+                overview: "A history of the United States from the 1950s unfolds through the perspective of an Alabama man with an IQ of 75."
+            },
+            {
+                tmdb_id: "238",
+                title: "The Godfather",
+                release_date: "1972-03-14",
+                vote_average: 8.7,
+                poster_path: "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
+                overview: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant youngest son."
+            },
+            {
+                tmdb_id: "496243",
+                title: "Parasite",
+                release_date: "2019-05-30",
+                vote_average: 8.5,
+                poster_path: "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+                overview: "All unemployed, Ki-taek's family takes a peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident."
             }
         ];
 
@@ -302,8 +316,7 @@
 
             const matches = CATALOG_MOVIES.filter(m => 
                 m.title.toLowerCase().includes(query.toLowerCase()) || 
-                m.id.toLowerCase() === query.toLowerCase() ||
-                (m.tmdb_id && m.tmdb_id.toString() === query) ||
+                m.tmdb_id.toString() === query ||
                 m.overview.toLowerCase().includes(query.toLowerCase())
             );
 
@@ -326,26 +339,26 @@
             movies.forEach(movie => {
                 const year = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
                 const card = document.createElement('div');
-                card.className = "group relative bg-brand-card rounded-lg overflow-hidden border border-brand-border hover:border-brand-red/80 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col shadow-lg";
+                card.className = "group relative bg-brand-card rounded-xl overflow-hidden border border-brand-border hover:border-brand-red/80 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col shadow-xl";
 
                 card.innerHTML = `
                     <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-950">
-                        <img src="${movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100" loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                            <span class="inline-flex items-center gap-1 text-[11px] bg-brand-red text-white font-bold px-2.5 py-1 rounded shadow-md">
-                                <i class="fa-solid fa-play text-[9px]"></i> Watch
+                        <img src="${movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95 group-hover:opacity-100" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                            <span class="inline-flex items-center gap-1.5 text-xs bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg shadow-lg">
+                                <i class="fa-solid fa-play text-[10px]"></i> Watch Movie
                             </span>
                         </div>
-                        <div class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 font-bold text-[10px] px-1.5 py-0.5 rounded border border-amber-500/20">
+                        <div class="absolute top-2.5 right-2.5 bg-black/80 backdrop-blur-md text-amber-400 font-bold text-[11px] px-2 py-1 rounded-lg border border-amber-500/20 shadow-md">
                             ★ ${movie.vote_average}
                         </div>
                     </div>
-                    <div class="p-3 flex flex-col justify-between flex-grow">
+                    <div class="p-3.5 flex flex-col justify-between flex-grow">
                         <div>
-                            <h3 class="font-bold text-white text-xs line-clamp-1 group-hover:text-brand-red transition-colors">${movie.title}</h3>
-                            <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1">
+                            <h3 class="font-bold text-white text-xs sm:text-sm line-clamp-1 group-hover:text-brand-red transition-colors">${movie.title}</h3>
+                            <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1.5">
                                 <span>${year}</span>
-                                <span class="font-mono text-[9px] bg-brand-dark px-1 py-0.5 rounded border border-brand-border/60">TMDB: ${movie.tmdb_id || 'N/A'}</span>
+                                <span class="font-mono text-[10px] bg-brand-dark px-1.5 py-0.5 rounded border border-brand-border/60 text-gray-400">ID: ${movie.tmdb_id}</span>
                             </div>
                         </div>
                     </div>
@@ -360,7 +373,7 @@
             currentActiveMovie = movie;
             modalTitle.textContent = movie.title;
             modalYear.textContent = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
-            modalImdbId.textContent = `${movie.id} • TMDB: ${movie.tmdb_id || 'N/A'}`;
+            modalImdbId.textContent = `TMDB ID: ${movie.tmdb_id}`;
             modalOverview.textContent = movie.overview || 'No description available.';
 
             movieModal.classList.remove('hidden');
@@ -372,9 +385,7 @@
         function loadStreamForCurrentMovie() {
             if (!currentActiveMovie) return;
 
-            const tmdbId = currentActiveMovie.tmdb_id || '27205';
-
-            // Switched to NexStream embed API format
+            const tmdbId = currentActiveMovie.tmdb_id;
             streamIframe.src = `https://api.codespecters.com/embed/movie/${tmdbId}`;
         }
 
@@ -384,12 +395,11 @@
             if (!rawVal) return;
 
             const movieObj = {
-                id: `tt${rawVal.replace('tt', '')}`,
                 tmdb_id: rawVal.replace('tt', ''),
                 title: `Custom Movie (TMDB: ${rawVal})`,
                 release_date: 'N/A',
                 vote_average: 'N/A',
-                overview: 'Direct stream player mode.'
+                overview: 'Direct stream player mode initialized via ID input.'
             };
 
             openPlayerModal(movieObj);
