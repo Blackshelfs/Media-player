@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineStream - Streaming Player</title>
+    <title>CineStream - Universal Web Media Player</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -96,7 +96,7 @@
                 <h1 id="section-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
                     Featured Catalog
                 </h1>
-                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream across working mirrors</p>
+                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with verified built-in subtitles</p>
             </div>
             <div id="result-count" class="text-xs font-semibold px-3 py-1 bg-gray-800 text-gray-300 rounded-full">
                 Ready
@@ -131,7 +131,7 @@
             <!-- Modal Header / Title -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40">
                 <div class="flex items-center space-x-3">
-                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">Live Stream Engine</span>
+                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">VidSrc.mov Engine</span>
                     <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white truncate max-w-md">Movie Title</h2>
                 </div>
                 
@@ -143,17 +143,14 @@
             <!-- Server Selector Bar -->
             <div class="bg-gray-900 border-b border-gray-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span class="text-gray-400 font-medium flex items-center gap-1.5">
-                    <i class="fa-solid fa-server text-brand-red"></i> Working Servers:
+                    <i class="fa-solid fa-server text-brand-red"></i> Streaming Mirror:
                 </span>
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <button onclick="switchServer('vidsrcto')" id="btn-server-vidsrcto" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
-                        Server 1 (VidSrc.to)
-                    </button>
-                    <button onclick="switchServer('vidsrcxyz')" id="btn-server-vidsrcxyz" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Server 2 (VidSrc.xyz)
+                    <button onclick="switchServer('vidsrcmov')" id="btn-server-vidsrcmov" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
+                        Primary (VidSrc.mov)
                     </button>
                     <button onclick="switchServer('2embed')" id="btn-server-2embed" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Server 3 (2Embed)
+                        Backup (2Embed)
                     </button>
                 </div>
             </div>
@@ -168,24 +165,24 @@
                 ></iframe>
             </div>
 
-            <!-- Custom Subtitle Injector Bar -->
+            <!-- Custom Subtitle Injector Bar (Optional fallback) -->
             <div class="bg-gray-900 border-t border-gray-800 px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-closed-captioning text-brand-red"></i>
-                    <span>Inject Custom Subtitle (`.vtt` link):</span>
+                    <span>Custom `.vtt` Subtitle URL (Optional):</span>
                 </div>
                 <div class="flex items-center space-x-2 w-full sm:w-auto">
                     <input 
                         type="url" 
                         id="custom-sub-input" 
-                        placeholder="https://example.com/subtitles.vtt" 
+                        placeholder="https://example.com/subs.vtt" 
                         class="bg-gray-800 text-gray-200 px-3 py-1.5 rounded border border-gray-700 text-xs w-full sm:w-72 focus:outline-none focus:border-brand-red"
                     >
                     <button 
                         onclick="applyCustomSubtitle()" 
                         class="bg-gray-700 hover:bg-brand-red text-white font-semibold px-3 py-1.5 rounded transition-colors whitespace-nowrap"
                     >
-                        Load Subtitle
+                        Inject Subtitle
                     </button>
                 </div>
             </div>
@@ -283,7 +280,7 @@
         ];
 
         let currentActiveMovie = null;
-        let currentServerKey = 'vidsrcto';
+        let currentServerKey = 'vidsrcmov';
 
         /* DOM Elements */
         const movieGrid = document.getElementById('movie-grid');
@@ -439,17 +436,14 @@
             let url = '';
 
             switch (currentServerKey) {
-                case 'vidsrcto':
-                    url = `https://vidsrc.to/embed/movie/${imdbId}`;
-                    break;
-                case 'vidsrcxyz':
-                    url = `https://vidsrc.xyz/embed/movie/${imdbId}`;
+                case 'vidsrcmov':
+                    url = `https://vidsrc.mov/embed/movie/${imdbId}`;
                     break;
                 case '2embed':
                     url = `https://www.2embed.cc/embed/${tmdbId}`;
                     break;
                 default:
-                    url = `https://vidsrc.to/embed/movie/${imdbId}`;
+                    url = `https://vidsrc.mov/embed/movie/${imdbId}`;
             }
 
             streamIframe.src = url;
@@ -460,11 +454,11 @@
             const subUrl = customSubInput.value.trim();
             if (!subUrl) return;
 
-            const encodedSub = encodeURIComponent(subUrl);
             const imdbId = currentActiveMovie.id;
+            // Native sub.info JSON injection supported by vidsrc.mov
+            const subInfo = encodeURIComponent(JSON.stringify([{ file: subUrl, label: "English" }]));
             
-            // Pass sub_file parameter to VidSrc.to endpoint
-            streamIframe.src = `https://vidsrc.to/embed/movie/${imdbId}?sub_file=${encodedSub}&sub_label=English`;
+            streamIframe.src = `https://vidsrc.mov/embed/movie/${imdbId}?sub.info=${subInfo}`;
         }
 
         function playDirectId() {
@@ -487,6 +481,7 @@
         }
 
         function closeModal() {
+            movieModal.classList.et ? movieModal.classList.add('hidden') : movieModal.classList.add('hidden');
             movieModal.classList.add('hidden');
             streamIframe.src = '';
             document.body.style.overflow = 'auto';
