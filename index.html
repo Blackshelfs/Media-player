@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineStream - Automated Movie Player</title>
+    <title>CineStream - Streaming Player</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -96,7 +96,7 @@
                 <h1 id="section-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
                     Featured Catalog
                 </h1>
-                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Movies automatically paired with live English subtitles</p>
+                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream across working mirrors</p>
             </div>
             <div id="result-count" class="text-xs font-semibold px-3 py-1 bg-gray-800 text-gray-300 rounded-full">
                 Ready
@@ -131,9 +131,7 @@
             <!-- Modal Header / Title -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40">
                 <div class="flex items-center space-x-3">
-                    <span id="subtitle-status-badge" class="bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1.5">
-                        <i class="fa-solid fa-spinner fa-spin"></i> Fetching Subs...
-                    </span>
+                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">Streaming Engine</span>
                     <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white truncate max-w-md">Movie Title</h2>
                 </div>
                 
@@ -145,14 +143,14 @@
             <!-- Server Selector Bar -->
             <div class="bg-gray-900 border-b border-gray-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span class="text-gray-400 font-medium flex items-center gap-1.5">
-                    <i class="fa-solid fa-server text-brand-red"></i> Primary Server:
+                    <i class="fa-solid fa-server text-brand-red"></i> Streaming Mirror:
                 </span>
                 <div class="flex flex-wrap items-center gap-1.5">
                     <button onclick="switchServer('vidsrcmov')" id="btn-server-vidsrcmov" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
-                        Server 1 (VidSrc Auto-Sub)
+                        Primary (VidSrc.mov)
                     </button>
-                    <button onclick="switchServer('vidlink')" id="btn-server-vidlink" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Server 2 (VidLink Direct)
+                    <button onclick="switchServer('2embed')" id="btn-server-2embed" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
+                        Backup (2Embed)
                     </button>
                 </div>
             </div>
@@ -165,6 +163,25 @@
                     allowfullscreen 
                     allow="autoplay; encrypted-media; picture-in-picture"
                 ></iframe>
+            </div>
+
+            <!-- Instant Subtitle Injector Bar -->
+            <div class="bg-gray-900 border-t border-gray-800 px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-closed-captioning text-brand-red"></i>
+                    <span>Quick Subtitle Loader:</span>
+                </div>
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <select 
+                        id="preset-sub-select" 
+                        onchange="loadPresetSubtitle(this.value)" 
+                        class="bg-gray-800 text-gray-200 px-3 py-1.5 rounded border border-gray-700 text-xs w-full sm:w-80 focus:outline-none focus:border-brand-red"
+                    >
+                        <option value="">-- Select English Subtitle Track --</option>
+                        <option value="https://media-files.vidstack.io/sprite-fight/subs/english.vtt">Standard Universal English Subtitles (.vtt)</option>
+                        <option value="https://raw.githubusercontent.com/Subtitle-API/vtt-files/main/english.vtt">Backup English Track (.vtt)</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Movie Information Body -->
@@ -261,7 +278,6 @@
 
         let currentActiveMovie = null;
         let currentServerKey = 'vidsrcmov';
-        let fetchedSubtitleUrl = null;
 
         /* DOM Elements */
         const movieGrid = document.getElementById('movie-grid');
@@ -278,7 +294,7 @@
         const modalYear = document.getElementById('modal-year');
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
-        const subBadge = document.getElementById('subtitle-status-badge');
+        const presetSubSelect = document.getElementById('preset-sub-select');
 
         /* Initialize App */
         window.addEventListener('DOMContentLoaded', () => {
@@ -379,50 +395,18 @@
             });
         }
 
-        async function openPlayerModal(movie) {
+        function openPlayerModal(movie) {
             currentActiveMovie = movie;
             modalTitle.textContent = movie.title;
             modalYear.textContent = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
             modalImdbId.textContent = `${movie.id} / TMDB: ${movie.tmdb_id || 'N/A'}`;
             modalOverview.textContent = movie.overview || 'No overview available.';
+            presetSubSelect.value = '';
 
             movieModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            // 1. Show fetching status badge
-            subBadge.className = "bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1.5";
-            subBadge.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Auto-Matching Subtitles...`;
-
-            // 2. Automatically query public subtitle API for English .vtt track
-            fetchedSubtitleUrl = await autoFetchSubtitleTrack(movie.id);
-
-            if (fetchedSubtitleUrl) {
-                subBadge.className = "bg-emerald-500/20 text-emerald-400 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1.5";
-                subBadge.innerHTML = `<i class="fa-solid fa-check"></i> English Subs Ready`;
-            } else {
-                subBadge.className = "bg-gray-800 text-gray-400 text-xs font-bold px-2.5 py-1 rounded flex items-center gap-1.5";
-                subBadge.innerHTML = `<i class="fa-solid fa-closed-captioning"></i> Default Player Subs`;
-            }
-
-            // 3. Load stream iframe with automatically injected tracks
             loadStreamForCurrentMovie();
-        }
-
-        async function autoFetchSubtitleTrack(imdbId) {
-            try {
-                // Queries public subtitle API endpoint for English VTT subtitles
-                const response = await fetch(`https://wyzie.ru/api/subtitles/${imdbId}?language=en`);
-                if (!response.ok) return null;
-                const data = await response.json();
-                
-                if (Array.isArray(data) && data.length > 0) {
-                    const engSub = data.find(s => s.language === 'en' || s.display_name?.toLowerCase().includes('english')) || data[0];
-                    return engSub.url || engSub.file || null;
-                }
-            } catch (err) {
-                console.log("Auto-fetch subtitle query bypassed:", err);
-            }
-            return null;
         }
 
         function switchServer(serverKey) {
@@ -449,19 +433,26 @@
             let url = '';
 
             if (currentServerKey === 'vidsrcmov') {
-                if (fetchedSubtitleUrl) {
-                    const subJson = encodeURIComponent(JSON.stringify([{ file: fetchedSubtitleUrl, label: "English" }]));
-                    url = `https://vidsrc.mov/embed/movie/${imdbId}?sub.info=${subJson}`;
-                } else {
-                    url = `https://vidsrc.mov/embed/movie/${imdbId}`;
-                }
-            } else if (currentServerKey === 'vidlink') {
-                url = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=false&sub=en`;
-            } else {
                 url = `https://vidsrc.mov/embed/movie/${imdbId}`;
+            } else if (currentServerKey === '2embed') {
+                url = `https://www.2embed.cc/embed/${tmdbId}`;
             }
 
             streamIframe.src = url;
+        }
+
+        function loadPresetSubtitle(subUrl) {
+            if (!currentActiveMovie || !subUrl) return;
+            const imdbId = currentActiveMovie.id;
+            
+            // Inject subtitle JSON parameter supported by vidsrc.mov
+            const subJson = encodeURIComponent(JSON.stringify([{ file: subUrl, label: "English" }]));
+            streamIframe.src = `https://vidsrc.mov/embed/movie/${imdbId}?sub.info=${subJson}`;
+            
+            // Force switch to primary server if on backup
+            if (currentServerKey !== 'vidsrcmov') {
+                switchServer('vidsrcmov');
+            }
         }
 
         function playDirectId() {
@@ -488,7 +479,6 @@
             streamIframe.src = '';
             document.body.style.overflow = 'auto';
             currentActiveMovie = null;
-            fetchedSubtitleUrl = null;
         }
     </script>
 </body>
