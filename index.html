@@ -170,7 +170,6 @@
 
     <!-- Script Logic -->
     <script>
-        // Free public TMDB read API key for client-side catalog searching
         const TMDB_API_KEY = "3fd2be6f0c70a2a598f084ddfb75487c";
         const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
@@ -212,7 +211,7 @@
 
                 if (query.length > 0) {
                     clearSearchBtn.classList.remove('hidden');
-                    searchTimeout = setTimeout(() => searchMovies(query), 400); // Debounce search
+                    searchTimeout = setTimeout(() => searchMovies(query), 400);
                 } else {
                     clearSearchBtn.classList.add('hidden');
                     fetchTrendingMovies();
@@ -325,8 +324,8 @@
             if (!currentActiveMovie) return;
             const tmdbId = currentActiveMovie.id;
             
-            // Using a high-performance stream router endpoint with sub support
-            streamIframe.src = `https://embed.su/embed/movie/${tmdbId}`;
+            // Reverted back to VidLink Pro which uses stable active infrastructure and supports auto-subtitles
+            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
         }
 
         async function playDirectId() {
@@ -335,7 +334,6 @@
             if (!rawVal) return;
 
             try {
-                // Fetch movie info from TMDB directly using the ID so it opens correctly with metadata
                 const res = await fetch(`https://api.themoviedb.org/3/movie/${rawVal}?api_key=${TMDB_API_KEY}`);
                 if (!res.ok) throw new Error("Movie not found");
                 const movieData = await res.json();
