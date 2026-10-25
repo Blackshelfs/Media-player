@@ -314,10 +314,11 @@
         function performSearch(query) {
             if (!query) return;
 
+            const lowerQuery = query.toLowerCase();
             const matches = CATALOG_MOVIES.filter(m => 
-                m.title.toLowerCase().includes(query.toLowerCase()) || 
-                m.tmdb_id.toString() === query ||
-                m.overview.toLowerCase().includes(query.toLowerCase())
+                m.title.toLowerCase().includes(lowerQuery) || 
+                m.tmdb_id.toString().includes(lowerQuery) ||
+                m.overview.toLowerCase().includes(lowerQuery)
             );
 
             renderMovies(matches, `Search Results (${matches.length})`);
@@ -386,7 +387,8 @@
             if (!currentActiveMovie) return;
 
             const tmdbId = currentActiveMovie.tmdb_id;
-            streamIframe.src = `https://api.codespecters.com/embed/movie/${tmdbId}`;
+            // Using the working VidLink Pro engine with autoplay and english subs enabled
+            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
         }
 
         function playDirectId() {
