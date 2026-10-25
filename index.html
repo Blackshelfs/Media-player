@@ -96,7 +96,7 @@
                 <h1 id="section-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
                     Featured Catalog
                 </h1>
-                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream across working mirrors</p>
+                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with reliable native subtitle support</p>
             </div>
             <div id="result-count" class="text-xs font-semibold px-3 py-1 bg-gray-800 text-gray-300 rounded-full">
                 Ready
@@ -131,7 +131,7 @@
             <!-- Modal Header / Title -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40">
                 <div class="flex items-center space-x-3">
-                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">Streaming Engine</span>
+                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">VidLink Engine</span>
                     <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white truncate max-w-md">Movie Title</h2>
                 </div>
                 
@@ -143,14 +143,14 @@
             <!-- Server Selector Bar -->
             <div class="bg-gray-900 border-b border-gray-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span class="text-gray-400 font-medium flex items-center gap-1.5">
-                    <i class="fa-solid fa-server text-brand-red"></i> Streaming Mirror:
+                    <i class="fa-solid fa-server text-brand-red"></i> Streaming Engine:
                 </span>
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <button onclick="switchServer('vidsrcmov')" id="btn-server-vidsrcmov" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
-                        Primary (VidSrc.mov)
+                    <button onclick="switchServer('vidlink')" id="btn-server-vidlink" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
+                        Primary (VidLink Subtitle-Optimized)
                     </button>
-                    <button onclick="switchServer('2embed')" id="btn-server-2embed" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Backup (2Embed)
+                    <button onclick="switchServer('vidsrcmov')" id="btn-server-vidsrcmov" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
+                        Backup (VidSrc.mov)
                     </button>
                 </div>
             </div>
@@ -169,7 +169,7 @@
             <div class="bg-gray-900 border-t border-gray-800 px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-closed-captioning text-brand-red"></i>
-                    <span>Quick Subtitle Loader:</span>
+                    <span>Quick Subtitle Fallback:</span>
                 </div>
                 <div class="flex items-center space-x-2 w-full sm:w-auto">
                     <select 
@@ -177,9 +177,8 @@
                         onchange="loadPresetSubtitle(this.value)" 
                         class="bg-gray-800 text-gray-200 px-3 py-1.5 rounded border border-gray-700 text-xs w-full sm:w-80 focus:outline-none focus:border-brand-red"
                     >
-                        <option value="">-- Select English Subtitle Track --</option>
-                        <option value="https://media-files.vidstack.io/sprite-fight/subs/english.vtt">Standard Universal English Subtitles (.vtt)</option>
-                        <option value="https://raw.githubusercontent.com/Subtitle-API/vtt-files/main/english.vtt">Backup English Track (.vtt)</option>
+                        <option value="">-- Select Subtitle Track --</option>
+                        <option value="https://media-files.vidstack.io/sprite-fight/subs/english.vtt">Universal English Subtitles (.vtt)</option>
                     </select>
                 </div>
             </div>
@@ -277,7 +276,7 @@
         ];
 
         let currentActiveMovie = null;
-        let currentServerKey = 'vidsrcmov';
+        let currentServerKey = 'vidlink';
 
         /* DOM Elements */
         const movieGrid = document.getElementById('movie-grid');
@@ -432,10 +431,11 @@
 
             let url = '';
 
-            if (currentServerKey === 'vidsrcmov') {
+            if (currentServerKey === 'vidlink') {
+                // VidLink natively handles open subtitles and includes a fully working subtitle settings menu
+                url = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=false&sub=en`;
+            } else if (currentServerKey === 'vidsrcmov') {
                 url = `https://vidsrc.mov/embed/movie/${imdbId}`;
-            } else if (currentServerKey === '2embed') {
-                url = `https://www.2embed.cc/embed/${tmdbId}`;
             }
 
             streamIframe.src = url;
@@ -445,11 +445,9 @@
             if (!currentActiveMovie || !subUrl) return;
             const imdbId = currentActiveMovie.id;
             
-            // Inject subtitle JSON parameter supported by vidsrc.mov
             const subJson = encodeURIComponent(JSON.stringify([{ file: subUrl, label: "English" }]));
             streamIframe.src = `https://vidsrc.mov/embed/movie/${imdbId}?sub.info=${subJson}`;
             
-            // Force switch to primary server if on backup
             if (currentServerKey !== 'vidsrcmov') {
                 switchServer('vidsrcmov');
             }
