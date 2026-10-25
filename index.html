@@ -99,7 +99,7 @@
                 <h1 id="section-title" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
                     Trending Movies
                 </h1>
-                <p class="text-xs text-gray-500 mt-0.5">Live database powered by TMDB & optimized HLS streaming</p>
+                <p class="text-xs text-gray-500 mt-0.5">Live database powered by TMDB & multi-server switching</p>
             </div>
             <div id="result-count" class="text-[11px] font-semibold px-3 py-1 bg-brand-card text-gray-400 rounded-lg border border-brand-border">
                 Ready
@@ -124,7 +124,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-brand-border/80 bg-brand-dark py-6 px-4 sm:px-8 text-center text-xs text-gray-600">
-        <p>&copy; CineStream Personal Cinema. Optimized Streaming Core.</p>
+        <p>&copy; CineStream Personal Cinema. Multi-Server Infrastructure.</p>
     </footer>
 
     <!-- Movie Player Modal -->
@@ -141,6 +141,24 @@
                 <button id="close-modal" onclick="closeModal()" class="w-9 h-9 bg-brand-border/40 hover:bg-brand-red text-gray-400 hover:text-white rounded-xl flex items-center justify-center transition-colors">
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
+            </div>
+
+            <!-- Server Selector Bar -->
+            <div class="bg-brand-dark px-6 py-2.5 border-b border-brand-border flex items-center justify-between gap-2 text-xs">
+                <span class="text-gray-400 font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-server text-brand-red"></i> Switch Server:
+                </span>
+                <div class="flex items-center gap-2">
+                    <button onclick="switchServer('vidlink')" id="btn-server-vidlink" class="server-btn bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg transition-colors">
+                        Server 1 (VidLink)
+                    </button>
+                    <button onclick="switchServer('vidsrc')" id="btn-server-vidsrc" class="server-btn bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors">
+                        Server 2 (VidSrc)
+                    </button>
+                    <button onclick="switchServer('embedsu')" id="btn-server-embedsu" class="server-btn bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors">
+                        Server 3 (EmbedSu)
+                    </button>
+                </div>
             </div>
 
             <!-- Video Player Frame -->
@@ -174,6 +192,7 @@
         const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
         let currentActiveMovie = null;
+        let currentServer = 'vidlink';
 
         /* DOM Elements */
         const movieGrid = document.getElementById('movie-grid');
@@ -320,12 +339,36 @@
             loadStreamForCurrentMovie();
         }
 
+        function switchServer(serverName) {
+            currentServer = serverName;
+
+            // Update active states on buttons
+            ['vidlink', 'vidsrc', 'embedsu'].forEach(s => {
+                const btn = document.getElementById(`btn-server-${s}`);
+                if (s === serverName) {
+                    btn.className = "server-btn bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg transition-colors";
+                } else {
+                    btn.className = "server-btn bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors";
+                }
+            });
+
+            loadStreamForCurrentMovie();
+        }
+
         function loadStreamForCurrentMovie() {
             if (!currentActiveMovie) return;
             const tmdbId = currentActiveMovie.id;
             
-            // Switched to VidCore API stream router for faster HLS delivery and smoother 1080p performance
-            streamIframe.src = `https://vidcore.org/embed/movie/${tmdbId}`;
+            let url = '';
+            if (currentServer === 'vidlink') {
+                url = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
+            } else if (currentServer === 'vidsrc') {
+                url = `https://vidsrc.cc/v2/embed/movie/${tmdbId}?autoPlay=true`;
+            } else if (currentServer === 'embedsu') {
+                url = `https://embed.su/embed/movie/${tmdbId}`;
+            }
+
+            streamIframe.src = url;
         }
 
         async function playDirectId() {
