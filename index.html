@@ -96,7 +96,7 @@
                 <h1 id="section-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
                     Featured Catalog
                 </h1>
-                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with alternative sources</p>
+                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with custom subtitle support</p>
             </div>
             <div id="result-count" class="text-xs font-semibold px-3 py-1 bg-gray-800 text-gray-300 rounded-full">
                 Ready
@@ -121,7 +121,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-gray-800/80 bg-brand-dark py-6 px-4 sm:px-8 mt-12 text-center text-xs text-gray-500">
-        <p>&copy; CineStream Local Media Player. Built for personal browsing and video streaming.</p>
+        <p>&copy; CineStream. Hosted securely on GitHub Pages.</p>
     </footer>
 
     <!-- Movie Player Modal -->
@@ -131,7 +131,7 @@
             <!-- Modal Header / Title -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40">
                 <div class="flex items-center space-x-3">
-                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">Multi-Server</span>
+                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">VidSrc Server</span>
                     <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white truncate max-w-md">Movie Title</h2>
                 </div>
                 
@@ -143,20 +143,20 @@
             <!-- Server Selector Bar -->
             <div class="bg-gray-900 border-b border-gray-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span class="text-gray-400 font-medium flex items-center gap-1.5">
-                    <i class="fa-solid fa-server text-brand-red"></i> Switch Streaming Server:
+                    <i class="fa-solid fa-server text-brand-red"></i> Switch Server:
                 </span>
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <button onclick="switchServer('vidsrccc')" id="btn-server-vidsrccc" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
-                        Server 1 (VidSrc.cc)
+                    <button onclick="switchServer('vidsrcsh')" id="btn-server-vidsrcsh" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
+                        Server 1 (VidSrc.sh)
+                    </button>
+                    <button onclick="switchServer('vidsrccc')" id="btn-server-vidsrccc" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
+                        Server 2 (VidSrc.cc)
                     </button>
                     <button onclick="switchServer('vidsrcme')" id="btn-server-vidsrcme" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Server 2 (VidSrc.me)
+                        Server 3 (VidSrc.me)
                     </button>
                     <button onclick="switchServer('2embed')" id="btn-server-2embed" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Server 3 (2Embed)
-                    </button>
-                    <button onclick="switchServer('vidsrcsh')" id="btn-server-vidsrcsh" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Server 4 (VidSrc.sh)
+                        Server 4 (2Embed)
                     </button>
                 </div>
             </div>
@@ -169,6 +169,28 @@
                     allowfullscreen 
                     allow="autoplay; encrypted-media; picture-in-picture"
                 ></iframe>
+            </div>
+
+            <!-- Custom Subtitle Injector Bar (Official VidSrc feature) -->
+            <div class="bg-gray-900 border-t border-gray-800 px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-closed-captioning text-brand-red"></i>
+                    <span>Missing Subs? Paste a Direct `.vtt` URL:</span>
+                </div>
+                <div class="flex items-center space-x-2 w-full sm:w-auto">
+                    <input 
+                        type="url" 
+                        id="custom-sub-input" 
+                        placeholder="https://example.com/subs.vtt" 
+                        class="bg-gray-800 text-gray-200 px-3 py-1.5 rounded border border-gray-700 text-xs w-full sm:w-72 focus:outline-none focus:border-brand-red"
+                    >
+                    <button 
+                        onclick="applyCustomSubtitle()" 
+                        class="bg-gray-700 hover:bg-brand-red text-white font-semibold px-3 py-1.5 rounded transition-colors whitespace-nowrap"
+                    >
+                        Inject Subtitle
+                    </button>
+                </div>
             </div>
 
             <!-- Movie Information Body -->
@@ -190,15 +212,6 @@
     <script>
         const CATALOG_MOVIES = [
             {
-                id: "tt0816692",
-                tmdb_id: "157336",
-                title: "Interstellar",
-                release_date: "2014-11-07",
-                vote_average: 8.4,
-                poster_path: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-                overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
-            },
-            {
                 id: "tt1675434",
                 tmdb_id: "77338",
                 title: "The Intouchables",
@@ -206,6 +219,15 @@
                 vote_average: 8.5,
                 poster_path: "https://image.tmdb.org/t/p/w500/34m2tyg32R2P9L3R3391pB0mC6Z.jpg",
                 overview: "After he becomes a quadriplegic from a paragliding accident, an aristocrat hires a young man from the projects to be his caregiver."
+            },
+            {
+                id: "tt0816692",
+                tmdb_id: "157336",
+                title: "Interstellar",
+                release_date: "2014-11-07",
+                vote_average: 8.4,
+                poster_path: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+                overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
             },
             {
                 id: "tt0094226",
@@ -264,7 +286,7 @@
         ];
 
         let currentActiveMovie = null;
-        let currentServerKey = 'vidsrccc';
+        let currentServerKey = 'vidsrcsh';
 
         /* DOM Elements */
         const movieGrid = document.getElementById('movie-grid');
@@ -281,6 +303,7 @@
         const modalYear = document.getElementById('modal-year');
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
+        const customSubInput = document.getElementById('custom-sub-input');
 
         /* Initialize App */
         window.addEventListener('DOMContentLoaded', () => {
@@ -387,6 +410,7 @@
             modalYear.textContent = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
             modalImdbId.textContent = `${movie.id} / TMDB: ${movie.tmdb_id || 'N/A'}`;
             modalOverview.textContent = movie.overview || 'No overview available.';
+            customSubInput.value = '';
 
             movieModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -418,6 +442,9 @@
             let url = '';
 
             switch (currentServerKey) {
+                case 'vidsrcsh':
+                    url = `https://vidsrc.sh/embed/movie/${imdbId}?ds_lang=en`;
+                    break;
                 case 'vidsrccc':
                     url = `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
                     break;
@@ -427,14 +454,23 @@
                 case '2embed':
                     url = `https://www.2embed.cc/embed/${tmdbId}`;
                     break;
-                case 'vidsrcsh':
-                    url = `https://vidsrc.sh/embed/movie/${imdbId}?ds_lang=en`;
-                    break;
                 default:
-                    url = `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
+                    url = `https://vidsrc.sh/embed/movie/${imdbId}?ds_lang=en`;
             }
 
             streamIframe.src = url;
+        }
+
+        function applyCustomSubtitle() {
+            if (!currentActiveMovie) return;
+            const subUrl = customSubInput.value.trim();
+            if (!subUrl) return;
+
+            // Injects sub_url parameter directly into VidSrc as specified in API docs
+            const encodedSub = encodeURIComponent(subUrl);
+            const imdbId = currentActiveMovie.id;
+            
+            streamIframe.src = `https://vidsrc.sh/embed/movie/${imdbId}?sub_url=${encodedSub}&sub_label=English&sub_lang=en`;
         }
 
         function playDirectId() {
