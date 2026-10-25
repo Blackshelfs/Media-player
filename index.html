@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Plyr CSS for Native Player Controls & Subtitles -->
+    <!-- Plyr CSS -->
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     
     <script>
@@ -99,7 +99,7 @@
                 <h1 id="section-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
                     Featured Catalog
                 </h1>
-                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with native subtitle track support</p>
+                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with forced caption controls</p>
             </div>
             <div id="result-count" class="text-xs font-semibold px-3 py-1 bg-gray-800 text-gray-300 rounded-full">
                 Ready
@@ -146,7 +146,8 @@
             <!-- Native Player Container with Plyr -->
             <div class="relative w-full aspect-video bg-black flex items-center justify-center">
                 <video id="media-player" playsinline controls crossorigin>
-                    <!-- Subtitle tracks will be injected dynamically here -->
+                    <!-- Default fallback track to guarantee caption button visibility -->
+                    <track kind="subtitles" label="English" srclang="en" src="https://media-files.vidstack.io/sprite-fight/subs/english.vtt" default>
                 </video>
             </div>
 
@@ -287,9 +288,10 @@
         const modalOverview = document.getElementById('modal-overview');
         const customSubInput = document.getElementById('custom-sub-input');
 
-        /* Initialize App */
+        /* Initialize App with Forced Controls */
         window.addEventListener('DOMContentLoaded', () => {
             player = new Plyr(videoElement, {
+                controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
                 captions: { active: true, update: true, language: 'en' }
             });
             renderMovies(CATALOG_MOVIES);
@@ -404,16 +406,14 @@
         }
 
         function loadMediaSource(movie) {
-            // Using a reliable sample stream source compatible with native HTML5 & Plyr
-            // You can replace or map this with your direct stream source handlers.
-            videoElement.innerHTML = `
-                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4" type="video/mp4" />
-                <track kind="subtitles" label="English" srclang="en" src="https://media-files.vidstack.io/sprite-fight/subs/english.vtt" default />
-            `;
             player.source = {
                 type: 'video',
-                sources: [{ src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', type: 'video/mp4' }],
-                tracks: [{ kind: 'subtitles', label: 'English', srclang: 'en', src: 'https://media-files.vidstack.io/sprite-fight/subs/english.vtt', default: true }]
+                sources: [
+                    { src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', type: 'video/mp4' }
+                ],
+                tracks: [
+                    { kind: 'subtitles', label: 'English', srclang: 'en', src: 'https://media-files.vidstack.io/sprite-fight/subs/english.vtt', default: true }
+                ]
             };
         }
 
@@ -421,11 +421,10 @@
             const subUrl = customSubInput.value.trim();
             if (!subUrl || !player) return;
 
-            // Dynamically append custom .vtt subtitle track into Plyr instance
-            const tracks = player.source.tracks || [];
-            tracks.push({
+            const existingTracks = player.source.tracks || [];
+            existingTracks.push({
                 kind: 'subtitles',
-                label: 'Custom Subtitle',
+                label: 'Custom Track',
                 srclang: 'en',
                 src: subUrl,
                 default: true
@@ -433,10 +432,10 @@
 
             player.source = {
                 ...player.source,
-                tracks: tracks
+                tracks: existingTracks
             };
             customSubInput.value = '';
-            alert('Subtitle track loaded successfully! Toggle captions on the player bar.');
+            alert('Custom subtitle track loaded successfully! Check the captions menu on the player bar.');
         }
 
         function playDirectId() {
