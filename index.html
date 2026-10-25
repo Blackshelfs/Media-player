@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineStream - Local Movie & Media Player</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            red: '#E50914',
+                            dark: '#141414',
+                            card: '#1F1F1F',
+                            hover: '#2F2F2F'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #141414; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+    </style>
+</head>
+<body class="bg-brand-dark text-gray-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-red selection:text-white">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur-md border-b border-gray-800/80 px-4 sm:px-8 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetToHome()">
+                <div class="bg-brand-red p-2.5 rounded-xl shadow-lg shadow-brand-red/30">
+                    <i class="fa-solid fa-film text-xl text-white"></i>
+                </div>
+                <span class="text-2xl font-black tracking-wider uppercase text-white">Cine<span class="text-brand-red">Stream</span></span>
+            </div>
+
+            <!-- Search Form -->
+            <form id="search-form" class="w-full md:w-1/2 max-w-xl relative">
+                <div class="relative flex items-center">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400"></i>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Search movies by title or IMDb/TMDB ID..." 
+                        class="w-full bg-brand-card text-gray-100 text-sm rounded-full pl-11 pr-10 py-3 border border-gray-700 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-all duration-200 placeholder-gray-500 shadow-inner"
+                        autocomplete="off"
+                    >
+                    <button type="button" id="clear-search" class="hidden absolute right-4 text-gray-400 hover:text-white">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Direct ID Input -->
+            <div class="flex items-center space-x-2 w-full md:w-auto">
+                <input 
+                    type="text" 
+                    id="direct-id-input" 
+                    placeholder="TMDB or IMDb ID..." 
+                    class="bg-gray-800 text-xs text-white px-3 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-brand-red w-36"
+                >
+                <button 
+                    onclick="playDirectId()" 
+                    class="bg-brand-red hover:bg-red-700 text-white font-bold text-xs px-3 py-2 rounded-lg transition-colors flex items-center gap-1 shadow-md whitespace-nowrap"
+                >
+                    <i class="fa-solid fa-play"></i> Play
+                </button>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-8">
+        
+        <!-- Status Header -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 pb-4 border-b border-gray-800 gap-2">
+            <div>
+                <h1 id="section-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
+                    Featured Catalog
+                </h1>
+                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with alternative sources</p>
+            </div>
+            <div id="result-count" class="text-xs font-semibold px-3 py-1 bg-gray-800 text-gray-300 rounded-full">
+                Ready
+            </div>
+        </div>
+
+        <!-- Movie Grid Container -->
+        <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+            <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
+            <div class="w-20 h-20 bg-gray-800/60 rounded-full flex items-center justify-center mb-4 text-gray-500 text-3xl">
+                <i class="fa-solid fa-film"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-200">No Titles Found</h3>
+            <p class="text-gray-400 text-sm max-w-md mt-2">Try searching for popular movies like "Interstellar", "Inception", or "The Untouchables".</p>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800/80 bg-brand-dark py-6 px-4 sm:px-8 mt-12 text-center text-xs text-gray-500">
+        <p>&copy; CineStream Local Media Player. Built for personal browsing and video streaming.</p>
+    </footer>
+
+    <!-- Movie Player Modal -->
+    <div id="movie-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+        <div class="relative bg-brand-card w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl border border-gray-800 my-auto">
+            
+            <!-- Modal Header / Title -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40">
+                <div class="flex items-center space-x-3">
+                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">Multi-Server</span>
+                    <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white truncate max-w-md">Movie Title</h2>
+                </div>
+                
+                <button id="close-modal" onclick="closeModal()" class="w-9 h-9 bg-gray-800 hover:bg-brand-red text-white rounded-full flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <!-- Server Selector Bar -->
+            <div class="bg-gray-900 border-b border-gray-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="text-gray-400 font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-server text-brand-red"></i> Switch Streaming Server:
+                </span>
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <button onclick="switchServer('vidsrccc')" id="btn-server-vidsrccc" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
+                        Server 1 (VidSrc.cc)
+                    </button>
+                    <button onclick="switchServer('vidsrcme')" id="btn-server-vidsrcme" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
+                        Server 2 (VidSrc.me)
+                    </button>
+                    <button onclick="switchServer('2embed')" id="btn-server-2embed" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
+                        Server 3 (2Embed)
+                    </button>
+                    <button onclick="switchServer('vidsrcsh')" id="btn-server-vidsrcsh" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
+                        Server 4 (VidSrc.sh)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Video Player Iframe Container -->
+            <div class="relative w-full aspect-video bg-black flex items-center justify-center">
+                <iframe 
+                    id="stream-iframe" 
+                    class="w-full h-full border-0" 
+                    allowfullscreen 
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                ></iframe>
+            </div>
+
+            <!-- Movie Information Body -->
+            <div class="p-6">
+                <div class="flex flex-wrap items-center gap-3 text-xs text-gray-400 mb-2">
+                    <span id="modal-year" class="font-semibold text-gray-200">Year</span>
+                    <span>&bull;</span>
+                    <span id="modal-imdb-id" class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-mono font-bold">IMDb/TMDB ID</span>
+                </div>
+                <p id="modal-overview" class="text-gray-300 text-sm leading-relaxed mt-2">
+                    Synopsis overview...
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        const CATALOG_MOVIES = [
+            {
+                id: "tt0816692",
+                tmdb_id: "157336",
+                title: "Interstellar",
+                release_date: "2014-11-07",
+                vote_average: 8.4,
+                poster_path: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+                overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
+            },
+            {
+                id: "tt1675434",
+                tmdb_id: "77338",
+                title: "The Intouchables",
+                release_date: "2011-11-02",
+                vote_average: 8.5,
+                poster_path: "https://image.tmdb.org/t/p/w500/34m2tyg32R2P9L3R3391pB0mC6Z.jpg",
+                overview: "After he becomes a quadriplegic from a paragliding accident, an aristocrat hires a young man from the projects to be his caregiver."
+            },
+            {
+                id: "tt0094226",
+                tmdb_id: "11782",
+                title: "The Untouchables",
+                release_date: "1987-06-03",
+                vote_average: 7.9,
+                poster_path: "https://image.tmdb.org/t/p/w500/A8114oN09A7P43v1k2R8xW4s6K1.jpg",
+                overview: "Federal Agent Eliot Ness sets out to stop ruthless Chicago gangster Al Capone, assembling a small team of trustworthy officers to help him."
+            },
+            {
+                id: "tt1300854",
+                tmdb_id: "68721",
+                title: "Iron Man 3",
+                release_date: "2013-05-03",
+                vote_average: 7.1,
+                poster_path: "https://image.tmdb.org/t/p/w500/qhPtL1nHC138vFi2yA9A8pC6k.jpg",
+                overview: "When Tony Stark's world is torn apart by a formidable terrorist called the Mandarin, he starts an odyssey of rebuilding and retribution."
+            },
+            {
+                id: "tt1375666",
+                tmdb_id: "27205",
+                title: "Inception",
+                release_date: "2010-07-16",
+                vote_average: 8.4,
+                poster_path: "https://image.tmdb.org/t/p/w500/oYuLE13zVCgQhxUYmeKWBNvftoo.jpg",
+                overview: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O."
+            },
+            {
+                id: "tt0468569",
+                tmdb_id: "155",
+                title: "The Dark Knight",
+                release_date: "2008-07-18",
+                vote_average: 8.5,
+                poster_path: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+                overview: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological tests."
+            },
+            {
+                id: "tt4154796",
+                tmdb_id: "299534",
+                title: "Avengers: Endgame",
+                release_date: "2019-04-26",
+                vote_average: 8.3,
+                poster_path: "https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg",
+                overview: "After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more."
+            },
+            {
+                id: "tt0110912",
+                tmdb_id: "680",
+                title: "Pulp Fiction",
+                release_date: "1994-10-14",
+                vote_average: 8.5,
+                poster_path: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+                overview: "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption."
+            }
+        ];
+
+        let currentActiveMovie = null;
+        let currentServerKey = 'vidsrccc';
+
+        /* DOM Elements */
+        const movieGrid = document.getElementById('movie-grid');
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const clearSearchBtn = document.getElementById('clear-search');
+        const emptyState = document.getElementById('empty-state');
+        const resultCount = document.getElementById('result-count');
+        const sectionTitle = document.getElementById('section-title');
+        
+        const movieModal = document.getElementById('movie-modal');
+        const streamIframe = document.getElementById('stream-iframe');
+        const modalTitle = document.getElementById('modal-title');
+        const modalYear = document.getElementById('modal-year');
+        const modalImdbId = document.getElementById('modal-imdb-id');
+        const modalOverview = document.getElementById('modal-overview');
+
+        /* Initialize App */
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMovies(CATALOG_MOVIES);
+            setupEvents();
+        });
+
+        function setupEvents() {
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                performSearch(searchInput.value.trim());
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+                if (query.length > 0) {
+                    clearSearchBtn.classList.remove('hidden');
+                    performSearch(query);
+                } else {
+                    clearSearchBtn.classList.add('hidden');
+                    renderMovies(CATALOG_MOVIES, "Featured Catalog");
+                }
+            });
+
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                clearSearchBtn.classList.add('hidden');
+                renderMovies(CATALOG_MOVIES, "Featured Catalog");
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeModal();
+            });
+        }
+
+        function resetToHome() {
+            searchInput.value = '';
+            clearSearchBtn.classList.add('hidden');
+            renderMovies(CATALOG_MOVIES, "Featured Catalog");
+        }
+
+        function performSearch(query) {
+            if (!query) return;
+
+            const matches = CATALOG_MOVIES.filter(m => 
+                m.title.toLowerCase().includes(query.toLowerCase()) || 
+                m.id.toLowerCase() === query.toLowerCase() ||
+                (m.tmdb_id && m.tmdb_id.toString() === query) ||
+                m.overview.toLowerCase().includes(query.toLowerCase())
+            );
+
+            renderMovies(matches, `Search Results for "${query}"`);
+        }
+
+        function renderMovies(movies, title = "Featured Catalog") {
+            sectionTitle.textContent = title;
+            movieGrid.innerHTML = '';
+
+            if (!movies || movies.length === 0) {
+                emptyState.classList.remove('hidden');
+                resultCount.textContent = '0 items';
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            resultCount.textContent = `${movies.length} items`;
+
+            movies.forEach(movie => {
+                const year = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
+                const card = document.createElement('div');
+                card.className = "group relative bg-brand-card rounded-xl overflow-hidden shadow-lg border border-gray-800 hover:border-brand-red/60 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col";
+
+                card.innerHTML = `
+                    <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-900">
+                        <img src="${movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                            <span class="inline-flex items-center gap-1.5 text-xs bg-brand-red text-white font-bold px-3 py-1.5 rounded shadow">
+                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                            </span>
+                        </div>
+                        <div class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 font-bold text-xs px-2 py-1 rounded border border-amber-500/20">
+                            <i class="fa-solid fa-star text-[10px]"></i> ${movie.vote_average}
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col justify-between flex-grow">
+                        <div>
+                            <h3 class="font-bold text-white text-sm line-clamp-1 group-hover:text-brand-red transition-colors">${movie.title}</h3>
+                            <div class="flex items-center justify-between text-xs text-gray-400 mt-1">
+                                <span>${year}</span>
+                                <span class="font-mono text-[10px] bg-gray-800 px-1.5 py-0.5 rounded text-gray-300">${movie.id}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => openPlayerModal(movie));
+                movieGrid.appendChild(card);
+            });
+        }
+
+        function openPlayerModal(movie) {
+            currentActiveMovie = movie;
+            modalTitle.textContent = movie.title;
+            modalYear.textContent = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
+            modalImdbId.textContent = `${movie.id} / TMDB: ${movie.tmdb_id || 'N/A'}`;
+            modalOverview.textContent = movie.overview || 'No overview available.';
+
+            movieModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            loadStreamForCurrentMovie();
+        }
+
+        function switchServer(serverKey) {
+            currentServerKey = serverKey;
+
+            document.querySelectorAll('.server-btn').forEach(btn => {
+                btn.className = "server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors";
+            });
+            
+            const activeBtn = document.getElementById(`btn-server-${serverKey}`);
+            if (activeBtn) {
+                activeBtn.className = "server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors";
+            }
+
+            loadStreamForCurrentMovie();
+        }
+
+        function loadStreamForCurrentMovie() {
+            if (!currentActiveMovie) return;
+
+            const imdbId = currentActiveMovie.id;
+            const tmdbId = currentActiveMovie.tmdb_id || '27205';
+
+            let url = '';
+
+            switch (currentServerKey) {
+                case 'vidsrccc':
+                    url = `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
+                    break;
+                case 'vidsrcme':
+                    url = `https://vidsrc.me/embed/movie?imdb=${imdbId}`;
+                    break;
+                case '2embed':
+                    url = `https://www.2embed.cc/embed/${tmdbId}`;
+                    break;
+                case 'vidsrcsh':
+                    url = `https://vidsrc.sh/embed/movie/${imdbId}?ds_lang=en`;
+                    break;
+                default:
+                    url = `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
+            }
+
+            streamIframe.src = url;
+        }
+
+        function playDirectId() {
+            const input = document.getElementById('direct-id-input');
+            const rawVal = input.value.trim();
+            if (!rawVal) return;
+
+            const isImdb = rawVal.startsWith('tt');
+            const movieObj = {
+                id: isImdb ? rawVal : `tt${rawVal}`,
+                tmdb_id: isImdb ? rawVal.replace('tt', '') : rawVal,
+                title: `Custom Movie (${rawVal})`,
+                release_date: 'N/A',
+                vote_average: 'N/A',
+                overview: 'Direct playback mode.'
+            };
+
+            openPlayerModal(movieObj);
+            input.value = '';
+        }
+
+        function closeModal() {
+            movieModal.classList.add('hidden');
+            streamIframe.src = '';
+            document.body.style.overflow = 'auto';
+            currentActiveMovie = null;
+        }
+    </script>
+</body>
+</html>
