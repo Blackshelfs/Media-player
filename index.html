@@ -324,8 +324,8 @@
             if (!currentActiveMovie) return;
             const tmdbId = currentActiveMovie.id;
             
-            // Reverted back to VidLink Pro which uses stable active infrastructure and supports auto-subtitles
-            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
+            // Upgraded with &player=jw to force the higher-quality JWPlayer streaming core
+            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&player=jw&autoplay=true&sub=en`;
         }
 
         async function playDirectId() {
