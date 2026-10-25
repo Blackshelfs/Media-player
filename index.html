@@ -99,7 +99,7 @@
                 <h1 id="section-title" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
                     Trending Movies
                 </h1>
-                <p class="text-xs text-gray-500 mt-0.5">Live database powered by TMDB & high-speed streaming</p>
+                <p class="text-xs text-gray-500 mt-0.5">Live database powered by TMDB & optimized HLS streaming</p>
             </div>
             <div id="result-count" class="text-[11px] font-semibold px-3 py-1 bg-brand-card text-gray-400 rounded-lg border border-brand-border">
                 Ready
@@ -124,7 +124,7 @@
 
     <!-- Footer -->
     <footer class="border-t border-brand-border/80 bg-brand-dark py-6 px-4 sm:px-8 text-center text-xs text-gray-600">
-        <p>&copy; CineStream Personal Cinema. Live TMDB Integration.</p>
+        <p>&copy; CineStream Personal Cinema. Optimized Streaming Core.</p>
     </footer>
 
     <!-- Movie Player Modal -->
@@ -324,8 +324,8 @@
             if (!currentActiveMovie) return;
             const tmdbId = currentActiveMovie.id;
             
-            // Upgraded with &player=jw to force the higher-quality JWPlayer streaming core
-            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&player=jw&autoplay=true&sub=en`;
+            // Switched to VidCore API stream router for faster HLS delivery and smoother 1080p performance
+            streamIframe.src = `https://vidcore.org/embed/movie/${tmdbId}`;
         }
 
         async function playDirectId() {
