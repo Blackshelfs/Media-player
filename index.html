@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineStream - Streaming Player</title>
+    <title>CineStream - Personal Cinema</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -18,9 +18,10 @@
                     colors: {
                         brand: {
                             red: '#E50914',
-                            dark: '#141414',
-                            card: '#1F1F1F',
-                            hover: '#2F2F2F'
+                            dark: '#0B0B0C',
+                            card: '#141416',
+                            border: '#26262A',
+                            hover: '#1D1D21'
                         }
                     },
                     fontFamily: {
@@ -31,131 +32,112 @@
         }
     </script>
     <style>
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #141414; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0B0B0C; }
+        ::-webkit-scrollbar-thumb { background: #26262A; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #E50914; }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-red selection:text-white">
 
     <!-- Header & Navigation -->
-    <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur-md border-b border-gray-800/80 px-4 sm:px-8 py-4">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-xl border-b border-brand-border/60 px-4 sm:px-8 py-3.5">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
             
             <!-- Brand Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="resetToHome()">
-                <div class="bg-brand-red p-2.5 rounded-xl shadow-lg shadow-brand-red/30">
-                    <i class="fa-solid fa-film text-xl text-white"></i>
+            <div class="flex items-center space-x-2.5 cursor-pointer group" onclick="resetToHome()">
+                <div class="bg-brand-red p-2 rounded-lg shadow-lg shadow-brand-red/20 group-hover:scale-105 transition-transform duration-200">
+                    <i class="fa-solid fa-play text-sm text-white"></i>
                 </div>
-                <span class="text-2xl font-black tracking-wider uppercase text-white">Cine<span class="text-brand-red">Stream</span></span>
+                <span class="text-xl font-extrabold tracking-wider text-white">CINE<span class="text-brand-red">STREAM</span></span>
             </div>
 
-            <!-- Search Form -->
-            <form id="search-form" class="w-full md:w-1/2 max-w-xl relative">
-                <div class="relative flex items-center">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 text-gray-400"></i>
+            <!-- Search & Direct ID Bar -->
+            <div class="flex items-center gap-2 w-full md:w-auto flex-1 max-w-2xl justify-end">
+                <form id="search-form" class="relative flex-1 max-w-md">
+                    <div class="relative flex items-center">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-gray-500 text-xs"></i>
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            placeholder="Search catalog or ID..." 
+                            class="w-full bg-brand-card text-gray-200 text-xs rounded-lg pl-9 pr-8 py-2.5 border border-brand-border focus:outline-none focus:border-brand-red transition-colors placeholder-gray-500"
+                            autocomplete="off"
+                        >
+                        <button type="button" id="clear-search" class="hidden absolute right-3 text-gray-500 hover:text-white text-xs">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Direct ID Input -->
+                <div class="flex items-center space-x-1.5">
                     <input 
                         type="text" 
-                        id="search-input" 
-                        placeholder="Search movies by title or IMDb/TMDB ID..." 
-                        class="w-full bg-brand-card text-gray-100 text-sm rounded-full pl-11 pr-10 py-3 border border-gray-700 focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red transition-all duration-200 placeholder-gray-500 shadow-inner"
-                        autocomplete="off"
+                        id="direct-id-input" 
+                        placeholder="TMDB/IMDb ID..." 
+                        class="bg-brand-card text-xs text-gray-200 px-3 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-red w-28 sm:w-32"
                     >
-                    <button type="button" id="clear-search" class="hidden absolute right-4 text-gray-400 hover:text-white">
-                        <i class="fa-solid fa-xmark"></i>
+                    <button 
+                        onclick="playDirectId()" 
+                        class="bg-brand-red hover:bg-red-700 text-white font-bold text-xs px-3.5 py-2.5 rounded-lg transition-colors flex items-center gap-1 shadow-md whitespace-nowrap"
+                    >
+                        <i class="fa-solid fa-play text-[10px]"></i> Direct Play
                     </button>
                 </div>
-            </form>
-
-            <!-- Direct ID Input -->
-            <div class="flex items-center space-x-2 w-full md:w-auto">
-                <input 
-                    type="text" 
-                    id="direct-id-input" 
-                    placeholder="TMDB or IMDb ID..." 
-                    class="bg-gray-800 text-xs text-white px-3 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-brand-red w-36"
-                >
-                <button 
-                    onclick="playDirectId()" 
-                    class="bg-brand-red hover:bg-red-700 text-white font-bold text-xs px-3 py-2 rounded-lg transition-colors flex items-center gap-1 shadow-md whitespace-nowrap"
-                >
-                    <i class="fa-solid fa-play"></i> Play
-                </button>
             </div>
 
         </div>
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-8">
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-6">
         
         <!-- Status Header -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 pb-4 border-b border-gray-800 gap-2">
+        <div class="flex items-center justify-between mb-6 pb-3 border-b border-brand-border/40">
             <div>
-                <h1 id="section-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
-                    Featured Catalog
+                <h1 id="section-title" class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+                    Featured Collection
                 </h1>
-                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with reliable native subtitle support</p>
             </div>
-            <div id="result-count" class="text-xs font-semibold px-3 py-1 bg-gray-800 text-gray-300 rounded-full">
+            <div id="result-count" class="text-[11px] font-medium px-2.5 py-0.5 bg-brand-card text-gray-400 rounded-md border border-brand-border">
                 Ready
             </div>
         </div>
 
         <!-- Movie Grid Container -->
-        <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+        <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 sm:gap-5">
             <!-- Rendered dynamically -->
         </div>
 
         <!-- Empty State -->
         <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
-            <div class="w-20 h-20 bg-gray-800/60 rounded-full flex items-center justify-center mb-4 text-gray-500 text-3xl">
+            <div class="w-16 h-16 bg-brand-card rounded-full flex items-center justify-center mb-3 text-gray-600 text-2xl border border-brand-border">
                 <i class="fa-solid fa-film"></i>
             </div>
-            <h3 class="text-xl font-bold text-gray-200">No Titles Found</h3>
-            <p class="text-gray-400 text-sm max-w-md mt-2">Try searching for popular movies like "Interstellar", "Inception", or "The Untouchables".</p>
+            <h3 class="text-lg font-bold text-gray-300">No Movies Found</h3>
+            <p class="text-gray-500 text-xs max-w-xs mt-1">Try searching for popular titles or pass a valid movie ID.</p>
         </div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-gray-800/80 bg-brand-dark py-6 px-4 sm:px-8 mt-12 text-center text-xs text-gray-500">
-        <p>&copy; CineStream. Hosted securely on GitHub Pages.</p>
-    </footer>
-
     <!-- Movie Player Modal -->
-    <div id="movie-modal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
-        <div class="relative bg-brand-card w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl border border-gray-800 my-auto">
+    <div id="movie-modal" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-xl flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
+        <div class="relative bg-brand-card w-full max-w-5xl rounded-xl overflow-hidden shadow-2xl border border-brand-border my-auto flex flex-col">
             
-            <!-- Modal Header / Title -->
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40">
-                <div class="flex items-center space-x-3">
-                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">VidLink Engine</span>
-                    <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white truncate max-w-md">Movie Title</h2>
+            <!-- Minimal Modal Header -->
+            <div class="flex items-center justify-between px-5 py-3 border-b border-brand-border bg-black/50">
+                <div class="flex items-center space-x-2.5">
+                    <span class="w-2 h-2 rounded-full bg-brand-red animate-pulse"></span>
+                    <h2 id="modal-title" class="text-base sm:text-lg font-bold text-white truncate max-w-md">Movie Title</h2>
                 </div>
                 
-                <button id="close-modal" onclick="closeModal()" class="w-9 h-9 bg-gray-800 hover:bg-brand-red text-white rounded-full flex items-center justify-center transition-colors">
-                    <i class="fa-solid fa-xmark text-base"></i>
+                <button id="close-modal" onclick="closeModal()" class="w-8 h-8 bg-brand-border/40 hover:bg-brand-red text-gray-400 hover:text-white rounded-lg flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
 
-            <!-- Server Selector Bar -->
-            <div class="bg-gray-900 border-b border-gray-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-                <span class="text-gray-400 font-medium flex items-center gap-1.5">
-                    <i class="fa-solid fa-server text-brand-red"></i> Streaming Server:
-                </span>
-                <div class="flex flex-wrap items-center gap-1.5">
-                    <button onclick="switchServer('vidlink')" id="btn-server-vidlink" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
-                        Server 1 (VidLink Pro)
-                    </button>
-                    <button onclick="switchServer('vidsrc')" id="btn-server-vidsrc" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Server 2 (VidSrc.sh)
-                    </button>
-                </div>
-            </div>
-
-            <!-- Video Player Iframe Container -->
+            <!-- Video Player Frame -->
             <div class="relative w-full aspect-video bg-black flex items-center justify-center">
                 <iframe 
                     id="stream-iframe" 
@@ -165,22 +147,22 @@
                 ></iframe>
             </div>
 
-            <!-- Movie Information Body -->
-            <div class="p-6">
-                <div class="flex flex-wrap items-center gap-3 text-xs text-gray-400 mb-2">
-                    <span id="modal-year" class="font-semibold text-gray-200">Year</span>
+            <!-- Compact Movie Metadata -->
+            <div class="p-5 bg-brand-card">
+                <div class="flex items-center gap-2.5 text-xs text-gray-400 mb-1.5">
+                    <span id="modal-year" class="font-bold text-gray-200">Year</span>
                     <span>&bull;</span>
-                    <span id="modal-imdb-id" class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-mono font-bold">IMDb/TMDB ID</span>
+                    <span id="modal-imdb-id" class="bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded text-[11px] font-mono border border-amber-500/20">ID</span>
                 </div>
-                <p id="modal-overview" class="text-gray-300 text-sm leading-relaxed mt-2">
-                    Synopsis overview...
+                <p id="modal-overview" class="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-3xl">
+                    Overview...
                 </p>
             </div>
 
         </div>
     </div>
 
-    <!-- Application Logic -->
+    <!-- Script Logic -->
     <script>
         const CATALOG_MOVIES = [
             {
@@ -258,7 +240,6 @@
         ];
 
         let currentActiveMovie = null;
-        let currentServerKey = 'vidlink';
 
         /* DOM Elements */
         const movieGrid = document.getElementById('movie-grid');
@@ -275,7 +256,6 @@
         const modalYear = document.getElementById('modal-year');
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
-        const playerStatusBadge = document.getElementById('player-status-badge');
 
         /* Initialize App */
         window.addEventListener('DOMContentLoaded', () => {
@@ -296,14 +276,14 @@
                     performSearch(query);
                 } else {
                     clearSearchBtn.classList.add('hidden');
-                    renderMovies(CATALOG_MOVIES, "Featured Catalog");
+                    renderMovies(CATALOG_MOVIES, "Featured Collection");
                 }
             });
 
             clearSearchBtn.addEventListener('click', () => {
                 searchInput.value = '';
                 clearSearchBtn.classList.add('hidden');
-                renderMovies(CATALOG_MOVIES, "Featured Catalog");
+                renderMovies(CATALOG_MOVIES, "Featured Collection");
             });
 
             document.addEventListener('keydown', (e) => {
@@ -314,7 +294,7 @@
         function resetToHome() {
             searchInput.value = '';
             clearSearchBtn.classList.add('hidden');
-            renderMovies(CATALOG_MOVIES, "Featured Catalog");
+            renderMovies(CATALOG_MOVIES, "Featured Collection");
         }
 
         function performSearch(query) {
@@ -327,45 +307,45 @@
                 m.overview.toLowerCase().includes(query.toLowerCase())
             );
 
-            renderMovies(matches, `Search Results for "${query}"`);
+            renderMovies(matches, `Search Results (${matches.length})`);
         }
 
-        function renderMovies(movies, title = "Featured Catalog") {
+        function renderMovies(movies, title = "Featured Collection") {
             sectionTitle.textContent = title;
             movieGrid.innerHTML = '';
 
             if (!movies || movies.length === 0) {
                 emptyState.classList.remove('hidden');
-                resultCount.textContent = '0 items';
+                resultCount.textContent = '0 titles';
                 return;
             }
 
             emptyState.classList.add('hidden');
-            resultCount.textContent = `${movies.length} items`;
+            resultCount.textContent = `${movies.length} titles`;
 
             movies.forEach(movie => {
                 const year = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
                 const card = document.createElement('div');
-                card.className = "group relative bg-brand-card rounded-xl overflow-hidden shadow-lg border border-gray-800 hover:border-brand-red/60 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col";
+                card.className = "group relative bg-brand-card rounded-lg overflow-hidden border border-brand-border hover:border-brand-red/80 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col shadow-lg";
 
                 card.innerHTML = `
-                    <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-900">
-                        <img src="${movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                            <span class="inline-flex items-center gap-1.5 text-xs bg-brand-red text-white font-bold px-3 py-1.5 rounded shadow">
-                                <i class="fa-solid fa-play text-[10px]"></i> Play Now
+                    <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-950">
+                        <img src="${movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90 group-hover:opacity-100" loading="lazy">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                            <span class="inline-flex items-center gap-1 text-[11px] bg-brand-red text-white font-bold px-2.5 py-1 rounded shadow-md">
+                                <i class="fa-solid fa-play text-[9px]"></i> Watch
                             </span>
                         </div>
-                        <div class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 font-bold text-xs px-2 py-1 rounded border border-amber-500/20">
-                            <i class="fa-solid fa-star text-[10px]"></i> ${movie.vote_average}
+                        <div class="absolute top-2 right-2 bg-black/80 backdrop-blur-md text-amber-400 font-bold text-[10px] px-1.5 py-0.5 rounded border border-amber-500/20">
+                            ★ ${movie.vote_average}
                         </div>
                     </div>
-                    <div class="p-4 flex flex-col justify-between flex-grow">
+                    <div class="p-3 flex flex-col justify-between flex-grow">
                         <div>
-                            <h3 class="font-bold text-white text-sm line-clamp-1 group-hover:text-brand-red transition-colors">${movie.title}</h3>
-                            <div class="flex items-center justify-between text-xs text-gray-400 mt-1">
+                            <h3 class="font-bold text-white text-xs line-clamp-1 group-hover:text-brand-red transition-colors">${movie.title}</h3>
+                            <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1">
                                 <span>${year}</span>
-                                <span class="font-mono text-[10px] bg-gray-800 px-1.5 py-0.5 rounded text-gray-300">${movie.id}</span>
+                                <span class="font-mono text-[9px] bg-brand-dark px-1 py-0.5 rounded border border-brand-border/60">${movie.id}</span>
                             </div>
                         </div>
                     </div>
@@ -380,8 +360,8 @@
             currentActiveMovie = movie;
             modalTitle.textContent = movie.title;
             modalYear.textContent = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
-            modalImdbId.textContent = `${movie.id} / TMDB: ${movie.tmdb_id || 'N/A'}`;
-            modalOverview.textContent = movie.overview || 'No overview available.';
+            modalImdbId.textContent = `${movie.id} • TMDB: ${movie.tmdb_id || 'N/A'}`;
+            modalOverview.textContent = movie.overview || 'No description available.';
 
             movieModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -389,43 +369,13 @@
             loadStreamForCurrentMovie();
         }
 
-        function switchServer(serverKey) {
-            currentServerKey = serverKey;
-
-            document.querySelectorAll('.server-btn').forEach(btn => {
-                btn.className = "server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors";
-            });
-            
-            const activeBtn = document.getElementById(`btn-server-${serverKey}`);
-            if (activeBtn) {
-                activeBtn.className = "server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors";
-            }
-
-            if (serverKey === 'vidlink') {
-                playerStatusBadge.textContent = "VidLink Engine";
-            } else {
-                playerStatusBadge.textContent = "VidSrc Engine";
-            }
-
-            loadStreamForCurrentMovie();
-        }
-
         function loadStreamForCurrentMovie() {
             if (!currentActiveMovie) return;
 
-            const imdbId = currentActiveMovie.id;
             const tmdbId = currentActiveMovie.tmdb_id || '27205';
 
-            let url = '';
-
-            if (currentServerKey === 'vidlink') {
-                url = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=false&sub=en`;
-            } else if (currentServerKey === 'vidsrc') {
-                // Uses the updated vidsrc.sh domain with ds_lang=en for automatic English subtitles
-                url = `https://vidsrc.sh/embed/movie/${imdbId}?ds_lang=en`;
-            }
-
-            streamIframe.src = url;
+            // Uses your working server with English subtitles enabled automatically
+            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
         }
 
         function playDirectId() {
@@ -440,7 +390,7 @@
                 title: `Custom Movie (${rawVal})`,
                 release_date: 'N/A',
                 vote_average: 'N/A',
-                overview: 'Direct playback mode.'
+                overview: 'Direct stream player mode.'
             };
 
             openPlayerModal(movieObj);
