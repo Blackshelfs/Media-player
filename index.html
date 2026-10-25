@@ -75,7 +75,7 @@
                     <input 
                         type="text" 
                         id="direct-id-input" 
-                        placeholder="TMDB/IMDb ID..." 
+                        placeholder="TMDB ID..." 
                         class="bg-brand-card text-xs text-gray-200 px-3 py-2.5 rounded-lg border border-brand-border focus:outline-none focus:border-brand-red w-28 sm:w-32"
                     >
                     <button 
@@ -345,7 +345,7 @@
                             <h3 class="font-bold text-white text-xs line-clamp-1 group-hover:text-brand-red transition-colors">${movie.title}</h3>
                             <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1">
                                 <span>${year}</span>
-                                <span class="font-mono text-[9px] bg-brand-dark px-1 py-0.5 rounded border border-brand-border/60">${movie.id}</span>
+                                <span class="font-mono text-[9px] bg-brand-dark px-1 py-0.5 rounded border border-brand-border/60">TMDB: ${movie.tmdb_id || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
@@ -374,8 +374,8 @@
 
             const tmdbId = currentActiveMovie.tmdb_id || '27205';
 
-            // Uses your working server with English subtitles enabled automatically
-            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
+            // Switched to NexStream embed API format
+            streamIframe.src = `https://api.codespecters.com/embed/movie/${tmdbId}`;
         }
 
         function playDirectId() {
@@ -383,11 +383,10 @@
             const rawVal = input.value.trim();
             if (!rawVal) return;
 
-            const isImdb = rawVal.startsWith('tt');
             const movieObj = {
-                id: isImdb ? rawVal : `tt${rawVal}`,
-                tmdb_id: isImdb ? rawVal.replace('tt', '') : rawVal,
-                title: `Custom Movie (${rawVal})`,
+                id: `tt${rawVal.replace('tt', '')}`,
+                tmdb_id: rawVal.replace('tt', ''),
+                title: `Custom Movie (TMDB: ${rawVal})`,
                 release_date: 'N/A',
                 vote_average: 'N/A',
                 overview: 'Direct stream player mode.'
