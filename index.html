@@ -60,7 +60,7 @@
                         <input 
                             type="text" 
                             id="search-input" 
-                            placeholder="Search catalog by title..." 
+                            placeholder="Search any movie worldwide..." 
                             class="w-full bg-brand-card text-gray-200 text-xs rounded-xl pl-10 pr-8 py-3 border border-brand-border focus:outline-none focus:border-brand-red transition-all placeholder-gray-500 shadow-inner"
                             autocomplete="off"
                         >
@@ -97,9 +97,9 @@
         <div class="flex items-center justify-between mb-6 pb-4 border-b border-brand-border/60">
             <div>
                 <h1 id="section-title" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
-                    Featured Collection
+                    Trending Movies
                 </h1>
-                <p class="text-xs text-gray-500 mt-0.5">Your personal curated library of cinematic masterpieces</p>
+                <p class="text-xs text-gray-500 mt-0.5">Live database powered by TMDB & high-speed streaming</p>
             </div>
             <div id="result-count" class="text-[11px] font-semibold px-3 py-1 bg-brand-card text-gray-400 rounded-lg border border-brand-border">
                 Ready
@@ -117,14 +117,14 @@
                 <i class="fa-solid fa-film"></i>
             </div>
             <h3 class="text-lg font-bold text-gray-300">No Movies Found</h3>
-            <p class="text-gray-500 text-xs max-w-xs mt-1">Try searching for another title or use a valid TMDB ID.</p>
+            <p class="text-gray-500 text-xs max-w-xs mt-1">Try searching for another title or check your spelling.</p>
         </div>
 
     </main>
 
     <!-- Footer -->
     <footer class="border-t border-brand-border/80 bg-brand-dark py-6 px-4 sm:px-8 text-center text-xs text-gray-600">
-        <p>&copy; CineStream Personal Cinema. Built for high-speed streaming.</p>
+        <p>&copy; CineStream Personal Cinema. Live TMDB Integration.</p>
     </footer>
 
     <!-- Movie Player Modal -->
@@ -170,88 +170,9 @@
 
     <!-- Script Logic -->
     <script>
-        const CATALOG_MOVIES = [
-            {
-                tmdb_id: "157336",
-                title: "Interstellar",
-                release_date: "2014-11-07",
-                vote_average: 8.4,
-                poster_path: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-                overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
-            },
-            {
-                tmdb_id: "27205",
-                title: "Inception",
-                release_date: "2010-07-16",
-                vote_average: 8.4,
-                poster_path: "https://image.tmdb.org/t/p/w500/oYuLE13zVCgQhxUYmeKWBNvftoo.jpg",
-                overview: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O."
-            },
-            {
-                tmdb_id: "155",
-                title: "The Dark Knight",
-                release_date: "2008-07-18",
-                vote_average: 8.5,
-                poster_path: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
-                overview: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological tests."
-            },
-            {
-                tmdb_id: "299534",
-                title: "Avengers: Endgame",
-                release_date: "2019-04-26",
-                vote_average: 8.3,
-                poster_path: "https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg",
-                overview: "After the devastating events of Infinity War, the universe is in ruins. With the help of remaining allies, the Avengers assemble once more."
-            },
-            {
-                tmdb_id: "680",
-                title: "Pulp Fiction",
-                release_date: "1994-10-14",
-                vote_average: 8.5,
-                poster_path: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
-                overview: "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption."
-            },
-            {
-                tmdb_id: "77338",
-                title: "The Intouchables",
-                release_date: "2011-11-02",
-                vote_average: 8.5,
-                poster_path: "https://image.tmdb.org/t/p/w500/34m2tyg32R2P9L3R3391pB0mC6Z.jpg",
-                overview: "After he becomes a quadriplegic from a paragliding accident, an aristocrat hires a young man from the projects to be his caregiver."
-            },
-            {
-                tmdb_id: "68721",
-                title: "Iron Man 3",
-                release_date: "2013-05-03",
-                vote_average: 7.1,
-                poster_path: "https://image.tmdb.org/t/p/w500/qhPtL1nHC138vFi2yA9A8pC6k.jpg",
-                overview: "When Tony Stark's world is torn apart by a formidable terrorist called the Mandarin, he starts an odyssey of rebuilding and retribution."
-            },
-            {
-                tmdb_id: "13",
-                title: "Forrest Gump",
-                release_date: "1994-07-06",
-                vote_average: 8.5,
-                poster_path: "https://image.tmdb.org/t/p/w500/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg",
-                overview: "A history of the United States from the 1950s unfolds through the perspective of an Alabama man with an IQ of 75."
-            },
-            {
-                tmdb_id: "238",
-                title: "The Godfather",
-                release_date: "1972-03-14",
-                vote_average: 8.7,
-                poster_path: "https://image.tmdb.org/t/p/w500/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
-                overview: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant youngest son."
-            },
-            {
-                tmdb_id: "496243",
-                title: "Parasite",
-                release_date: "2019-05-30",
-                vote_average: 8.5,
-                poster_path: "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
-                overview: "All unemployed, Ki-taek's family takes a peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident."
-            }
-        ];
+        // Free public TMDB read API key for client-side catalog searching
+        const TMDB_API_KEY = "3fd2be6f0c70a2a598f084ddfb75487c";
+        const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
         let currentActiveMovie = null;
 
@@ -271,33 +192,37 @@
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
 
-        /* Initialize App */
+        /* Initialize App - Load Trending Movies on Startup */
         window.addEventListener('DOMContentLoaded', () => {
-            renderMovies(CATALOG_MOVIES);
+            fetchTrendingMovies();
             setupEvents();
         });
 
         function setupEvents() {
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                performSearch(searchInput.value.trim());
+                const query = searchInput.value.trim();
+                if (query) searchMovies(query);
             });
 
+            let searchTimeout;
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.trim();
+                clearTimeout(searchTimeout);
+
                 if (query.length > 0) {
                     clearSearchBtn.classList.remove('hidden');
-                    performSearch(query);
+                    searchTimeout = setTimeout(() => searchMovies(query), 400); // Debounce search
                 } else {
                     clearSearchBtn.classList.add('hidden');
-                    renderMovies(CATALOG_MOVIES, "Featured Collection");
+                    fetchTrendingMovies();
                 }
             });
 
             clearSearchBtn.addEventListener('click', () => {
                 searchInput.value = '';
                 clearSearchBtn.classList.add('hidden');
-                renderMovies(CATALOG_MOVIES, "Featured Collection");
+                fetchTrendingMovies();
             });
 
             document.addEventListener('keydown', (e) => {
@@ -305,53 +230,66 @@
             });
         }
 
+        async function fetchTrendingMovies() {
+            sectionTitle.textContent = "Trending Movies";
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`);
+                const data = await res.json();
+                renderMovies(data.results);
+            } catch (err) {
+                console.error("Failed to fetch trending movies:", err);
+            }
+        }
+
+        async function searchMovies(query) {
+            sectionTitle.textContent = `Search Results for "${query}"`;
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                renderMovies(data.results);
+            } catch (err) {
+                console.error("Search failed:", err);
+            }
+        }
+
         function resetToHome() {
             searchInput.value = '';
             clearSearchBtn.classList.add('hidden');
-            renderMovies(CATALOG_MOVIES, "Featured Collection");
+            fetchTrendingMovies();
         }
 
-        function performSearch(query) {
-            if (!query) return;
-
-            const lowerQuery = query.toLowerCase();
-            const matches = CATALOG_MOVIES.filter(m => 
-                m.title.toLowerCase().includes(lowerQuery) || 
-                m.tmdb_id.toString().includes(lowerQuery) ||
-                m.overview.toLowerCase().includes(lowerQuery)
-            );
-
-            renderMovies(matches, `Search Results (${matches.length})`);
-        }
-
-        function renderMovies(movies, title = "Featured Collection") {
-            sectionTitle.textContent = title;
+        function renderMovies(movies) {
             movieGrid.innerHTML = '';
 
-            if (!movies || movies.length === 0) {
+            const validMovies = movies.filter(m => m.poster_path);
+
+            if (!validMovies || validMovies.length === 0) {
                 emptyState.classList.remove('hidden');
                 resultCount.textContent = '0 titles';
                 return;
             }
 
             emptyState.classList.add('hidden');
-            resultCount.textContent = `${movies.length} titles`;
+            resultCount.textContent = `${validMovies.length} titles`;
 
-            movies.forEach(movie => {
+            validMovies.forEach(movie => {
                 const year = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
+                const posterUrl = `${TMDB_IMAGE_BASE}${movie.poster_path}`;
+                const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
+
                 const card = document.createElement('div');
                 card.className = "group relative bg-brand-card rounded-xl overflow-hidden border border-brand-border hover:border-brand-red/80 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col shadow-xl";
 
                 card.innerHTML = `
                     <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-950">
-                        <img src="${movie.poster_path}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95 group-hover:opacity-100" loading="lazy">
+                        <img src="${posterUrl}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95 group-hover:opacity-100" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                             <span class="inline-flex items-center gap-1.5 text-xs bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg shadow-lg">
                                 <i class="fa-solid fa-play text-[10px]"></i> Watch Movie
                             </span>
                         </div>
                         <div class="absolute top-2.5 right-2.5 bg-black/80 backdrop-blur-md text-amber-400 font-bold text-[11px] px-2 py-1 rounded-lg border border-amber-500/20 shadow-md">
-                            ★ ${movie.vote_average}
+                            ★ ${rating}
                         </div>
                     </div>
                     <div class="p-3.5 flex flex-col justify-between flex-grow">
@@ -359,7 +297,7 @@
                             <h3 class="font-bold text-white text-xs sm:text-sm line-clamp-1 group-hover:text-brand-red transition-colors">${movie.title}</h3>
                             <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1.5">
                                 <span>${year}</span>
-                                <span class="font-mono text-[10px] bg-brand-dark px-1.5 py-0.5 rounded border border-brand-border/60 text-gray-400">ID: ${movie.tmdb_id}</span>
+                                <span class="font-mono text-[10px] bg-brand-dark px-1.5 py-0.5 rounded border border-brand-border/60 text-gray-400">ID: ${movie.id}</span>
                             </div>
                         </div>
                     </div>
@@ -374,7 +312,7 @@
             currentActiveMovie = movie;
             modalTitle.textContent = movie.title;
             modalYear.textContent = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
-            modalImdbId.textContent = `TMDB ID: ${movie.tmdb_id}`;
+            modalImdbId.textContent = `TMDB ID: ${movie.id}`;
             modalOverview.textContent = movie.overview || 'No description available.';
 
             movieModal.classList.remove('hidden');
@@ -385,26 +323,27 @@
 
         function loadStreamForCurrentMovie() {
             if (!currentActiveMovie) return;
-
-            const tmdbId = currentActiveMovie.tmdb_id;
-            // Using the working VidLink Pro engine with autoplay and english subs enabled
-            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
+            const tmdbId = currentActiveMovie.id;
+            
+            // Using a high-performance stream router endpoint with sub support
+            streamIframe.src = `https://embed.su/embed/movie/${tmdbId}`;
         }
 
-        function playDirectId() {
+        async function playDirectId() {
             const input = document.getElementById('direct-id-input');
-            const rawVal = input.value.trim();
+            const rawVal = input.value.trim().replace('tt', '');
             if (!rawVal) return;
 
-            const movieObj = {
-                tmdb_id: rawVal.replace('tt', ''),
-                title: `Custom Movie (TMDB: ${rawVal})`,
-                release_date: 'N/A',
-                vote_average: 'N/A',
-                overview: 'Direct stream player mode initialized via ID input.'
-            };
-
-            openPlayerModal(movieObj);
+            try {
+                // Fetch movie info from TMDB directly using the ID so it opens correctly with metadata
+                const res = await fetch(`https://api.themoviedb.org/3/movie/${rawVal}?api_key=${TMDB_API_KEY}`);
+                if (!res.ok) throw new Error("Movie not found");
+                const movieData = await res.json();
+                
+                openPlayerModal(movieData);
+            } catch (err) {
+                alert("Invalid TMDB ID or movie not found in database.");
+            }
             input.value = '';
         }
 
