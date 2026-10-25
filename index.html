@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineStream - Universal Web Media Player</title>
+    <title>CineStream - Movie Streaming App</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Plyr CSS -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     
     <script>
         tailwind.config = {
@@ -37,7 +35,6 @@
         ::-webkit-scrollbar-track { background: #141414; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
-        .plyr { border-radius: 0.75rem; overflow: hidden; width: 100%; height: 100%; }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-red selection:text-white">
@@ -99,7 +96,7 @@
                 <h1 id="section-title" class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center gap-3">
                     Featured Catalog
                 </h1>
-                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream with forced caption controls</p>
+                <p id="section-subtitle" class="text-xs sm:text-sm text-gray-400 mt-1">Select any movie to stream across working mirrors</p>
             </div>
             <div id="result-count" class="text-xs font-semibold px-3 py-1 bg-gray-800 text-gray-300 rounded-full">
                 Ready
@@ -134,7 +131,7 @@
             <!-- Modal Header / Title -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 bg-black/40">
                 <div class="flex items-center space-x-3">
-                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">Plyr Engine</span>
+                    <span id="player-status-badge" class="bg-brand-red text-white text-xs font-bold px-2.5 py-1 rounded">Multi-Server Engine</span>
                     <h2 id="modal-title" class="text-lg sm:text-xl font-bold text-white truncate max-w-md">Movie Title</h2>
                 </div>
                 
@@ -143,29 +140,49 @@
                 </button>
             </div>
 
-            <!-- Native Player Container with Plyr -->
+            <!-- Server Selector Bar -->
+            <div class="bg-gray-900 border-b border-gray-800 px-6 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="text-gray-400 font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-server text-brand-red"></i> Switch Streaming Mirror:
+                </span>
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <button onclick="switchServer('vidsrcme')" id="btn-server-vidsrcme" class="server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors">
+                        Server 1 (VidSrc.me)
+                    </button>
+                    <button onclick="switchServer('2embed')" id="btn-server-2embed" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
+                        Server 2 (2Embed)
+                    </button>
+                    <button onclick="switchServer('vidsrccc')" id="btn-server-vidsrccc" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
+                        Server 3 (VidSrc.cc)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Video Player Iframe Container -->
             <div class="relative w-full aspect-video bg-black flex items-center justify-center">
-                <video id="media-player" playsinline controls crossorigin>
-                    <!-- Default fallback track to guarantee caption button visibility -->
-                    <track kind="subtitles" label="English" srclang="en" src="https://media-files.vidstack.io/sprite-fight/subs/english.vtt" default>
-                </video>
+                <iframe 
+                    id="stream-iframe" 
+                    class="w-full h-full border-0" 
+                    allowfullscreen 
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                ></iframe>
             </div>
 
             <!-- Custom Subtitle Injector Bar -->
             <div class="bg-gray-900 border-t border-gray-800 px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-400">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-closed-captioning text-brand-red"></i>
-                    <span>Add Subtitle (`.vtt` link):</span>
+                    <span>Inject Custom `.vtt` Subtitle URL:</span>
                 </div>
                 <div class="flex items-center space-x-2 w-full sm:w-auto">
                     <input 
                         type="url" 
                         id="custom-sub-input" 
-                        placeholder="https://example.com/subs.vtt" 
+                        placeholder="https://example.com/subtitles.vtt" 
                         class="bg-gray-800 text-gray-200 px-3 py-1.5 rounded border border-gray-700 text-xs w-full sm:w-72 focus:outline-none focus:border-brand-red"
                     >
                     <button 
-                        onclick="injectCustomTrack()" 
+                        onclick="applyCustomSubtitle()" 
                         class="bg-gray-700 hover:bg-brand-red text-white font-semibold px-3 py-1.5 rounded transition-colors whitespace-nowrap"
                     >
                         Load Subtitle
@@ -187,9 +204,6 @@
 
         </div>
     </div>
-
-    <!-- Plyr Script -->
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 
     <!-- Application Logic -->
     <script>
@@ -268,8 +282,8 @@
             }
         ];
 
-        let player = null;
         let currentActiveMovie = null;
+        let currentServerKey = 'vidsrcme';
 
         /* DOM Elements */
         const movieGrid = document.getElementById('movie-grid');
@@ -281,19 +295,15 @@
         const sectionTitle = document.getElementById('section-title');
         
         const movieModal = document.getElementById('movie-modal');
-        const videoElement = document.getElementById('media-player');
+        const streamIframe = document.getElementById('stream-iframe');
         const modalTitle = document.getElementById('modal-title');
         const modalYear = document.getElementById('modal-year');
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
         const customSubInput = document.getElementById('custom-sub-input');
 
-        /* Initialize App with Forced Controls */
+        /* Initialize App */
         window.addEventListener('DOMContentLoaded', () => {
-            player = new Plyr(videoElement, {
-                controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'captions', 'settings', 'fullscreen'],
-                captions: { active: true, update: true, language: 'en' }
-            });
             renderMovies(CATALOG_MOVIES);
             setupEvents();
         });
@@ -402,40 +412,59 @@
             movieModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            loadMediaSource(movie);
+            loadStreamForCurrentMovie();
         }
 
-        function loadMediaSource(movie) {
-            player.source = {
-                type: 'video',
-                sources: [
-                    { src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', type: 'video/mp4' }
-                ],
-                tracks: [
-                    { kind: 'subtitles', label: 'English', srclang: 'en', src: 'https://media-files.vidstack.io/sprite-fight/subs/english.vtt', default: true }
-                ]
-            };
-        }
+        function switchServer(serverKey) {
+            currentServerKey = serverKey;
 
-        function injectCustomTrack() {
-            const subUrl = customSubInput.value.trim();
-            if (!subUrl || !player) return;
-
-            const existingTracks = player.source.tracks || [];
-            existingTracks.push({
-                kind: 'subtitles',
-                label: 'Custom Track',
-                srclang: 'en',
-                src: subUrl,
-                default: true
+            document.querySelectorAll('.server-btn').forEach(btn => {
+                btn.className = "server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors";
             });
+            
+            const activeBtn = document.getElementById(`btn-server-${serverKey}`);
+            if (activeBtn) {
+                activeBtn.className = "server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors";
+            }
 
-            player.source = {
-                ...player.source,
-                tracks: existingTracks
-            };
-            customSubInput.value = '';
-            alert('Custom subtitle track loaded successfully! Check the captions menu on the player bar.');
+            loadStreamForCurrentMovie();
+        }
+
+        function loadStreamForCurrentMovie() {
+            if (!currentActiveMovie) return;
+
+            const imdbId = currentActiveMovie.id;
+            const tmdbId = currentActiveMovie.tmdb_id || '27205';
+
+            let url = '';
+
+            switch (currentServerKey) {
+                case 'vidsrcme':
+                    url = `https://vidsrc.me/embed/movie?imdb=${imdbId}`;
+                    break;
+                case '2embed':
+                    url = `https://www.2embed.cc/embed/${tmdbId}`;
+                    break;
+                case 'vidsrccc':
+                    url = `https://vidsrc.cc/v2/embed/movie/${tmdbId}`;
+                    break;
+                default:
+                    url = `https://vidsrc.me/embed/movie?imdb=${imdbId}`;
+            }
+
+            streamIframe.src = url;
+        }
+
+        function applyCustomSubtitle() {
+            if (!currentActiveMovie) return;
+            const subUrl = customSubInput.value.trim();
+            if (!subUrl) return;
+
+            const encodedSub = encodeURIComponent(subUrl);
+            const imdbId = currentActiveMovie.id;
+            
+            // Pass sub_url directly to VidSrc embed endpoint
+            streamIframe.src = `https://vidsrc.me/embed/movie?imdb=${imdbId}&sub_url=${encodedSub}`;
         }
 
         function playDirectId() {
@@ -459,7 +488,7 @@
 
         function closeModal() {
             movieModal.classList.add('hidden');
-            if (player) player.pause();
+            streamIframe.src = '';
             document.body.style.overflow = 'auto';
             currentActiveMovie = null;
         }
