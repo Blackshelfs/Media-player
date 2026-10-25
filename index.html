@@ -150,7 +150,7 @@
                         Server 1 (VidLink Pro)
                     </button>
                     <button onclick="switchServer('vidsrc')" id="btn-server-vidsrc" class="server-btn bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium px-3 py-1 rounded transition-colors">
-                        Server 2 (VidSrc.to)
+                        Server 2 (VidSrc.sh)
                     </button>
                 </div>
             </div>
@@ -275,6 +275,7 @@
         const modalYear = document.getElementById('modal-year');
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
+        const playerStatusBadge = document.getElementById('player-status-badge');
 
         /* Initialize App */
         window.addEventListener('DOMContentLoaded', () => {
@@ -400,6 +401,12 @@
                 activeBtn.className = "server-btn bg-brand-red text-white font-bold px-3 py-1 rounded transition-colors";
             }
 
+            if (serverKey === 'vidlink') {
+                playerStatusBadge.textContent = "VidLink Engine";
+            } else {
+                playerStatusBadge.textContent = "VidSrc Engine";
+            }
+
             loadStreamForCurrentMovie();
         }
 
@@ -412,10 +419,10 @@
             let url = '';
 
             if (currentServerKey === 'vidlink') {
-                // VidLink Pro embed configured to load English subtitles natively
                 url = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=false&sub=en`;
             } else if (currentServerKey === 'vidsrc') {
-                url = `https://vidsrc.to/embed/movie/${imdbId}`;
+                // Uses the updated vidsrc.sh domain with ds_lang=en for automatic English subtitles
+                url = `https://vidsrc.sh/embed/movie/${imdbId}?ds_lang=en`;
             }
 
             streamIframe.src = url;
