@@ -196,9 +196,11 @@
 
             <!-- Streaming Server Switching Bar -->
             <div class="bg-brand-dark px-6 py-2.5 border-b border-brand-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
-                <span id="server-status-text" class="text-gray-400 font-medium flex items-center gap-1.5">
-                    <i class="fa-solid fa-server text-brand-red"></i> Streaming Server: <span id="active-server-name" class="text-white font-bold">VidLink</span>
-                </span>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-400 font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-server text-brand-red"></i> Server: <span id="active-server-name" class="text-white font-bold">VidLink</span>
+                    </span>
+                </div>
                 <div class="flex items-center gap-2 flex-wrap">
                     <button onclick="switchServer('vidlink')" id="btn-server-vidlink" class="server-btn bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg transition-colors">
                         Server 1 (VidLink)
@@ -209,16 +211,14 @@
                     <button onclick="switchServer('embedsu')" id="btn-server-embedsu" class="server-btn bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors">
                         Server 3 (EmbedSu)
                     </button>
+                    <a id="external-link-btn" href="#" target="_blank" class="bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                        <i class="fa-solid fa-external-link text-[10px]"></i> Open Native
+                    </a>
                 </div>
             </div>
 
             <!-- Video Player Embed Container -->
             <div class="relative w-full aspect-video bg-black flex items-center justify-center shadow-2xl">
-                <!-- Loading overlay indicator -->
-                <div id="player-loader" class="absolute inset-0 bg-brand-dark/80 backdrop-blur-sm flex flex-col items-center justify-center gap-2 z-10 transition-opacity duration-300">
-                    <div class="w-8 h-8 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-xs text-gray-300 font-medium">Connecting to high-speed stream node...</p>
-                </div>
                 <iframe 
                     id="stream-iframe" 
                     class="w-full h-full border-0" 
@@ -256,7 +256,6 @@
         let currentActiveMovie = null;
         let loadedMoviesList = [];
         let currentServer = 'vidlink';
-        let serverFallbackTimeout = null;
 
         /* DOM References */
         const movieGrid = document.getElementById('movie-grid');
@@ -272,12 +271,12 @@
         
         const movieModal = document.getElementById('movie-modal');
         const streamIframe = document.getElementById('stream-iframe');
-        const playerLoader = document.getElementById('player-loader');
         const modalTitle = document.getElementById('modal-title');
         const modalYear = document.getElementById('modal-year');
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
         const activeServerName = document.getElementById('active-server-name');
+        const externalLinkBtn = document.getElementById('external-link-btn');
 
         /* Initialize Platform */
         window.addEventListener('DOMContentLoaded', () => {
@@ -459,7 +458,6 @@
             movieModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            // Default to VidLink on open
             switchServer('vidlink');
             executeAutomatedSeoEngine(movie);
         }
@@ -487,9 +485,6 @@
             if (!currentActiveMovie) return;
             const tmdbId = currentActiveMovie.id;
             
-            // Show loading overlay while iframe starts fetching chunks
-            if (playerLoader) playerLoader.style.opacity = '1';
-
             let url = '';
             if (currentServer === 'vidlink') {
                 url = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
@@ -500,33 +495,12 @@
             }
 
             streamIframe.src = url;
-
-            // Clear any prior fallback timers
-            if (serverFallbackTimeout) clearTimeout(serverFallbackTimeout);
-
-            // Auto-hide loader spinner after 3 seconds so the user isn't stuck waiting on a dead overlay
-            setTimeout(() => {
-                if (playerLoader) playerLoader.style.opacity = '0';
-            }, 3000);
-
-            // AUTO-FALLBACK SAFETY NET: If server hangs for 8 seconds, automatically bounce to next server
-            serverFallbackTimeout = setTimeout(() => {
-                if (currentServer === 'vidlink') {
-                    console.log("VidLink response slow, auto-switching to VidSrc...");
-                    switchServer('vidsrc');
-                    openToast("Server lagging. Auto-switched to Server 2.");
-                } else if (currentServer === 'vidsrc') {
-                    console.log("VidSrc response slow, auto-switching to EmbedSu...");
-                    switchServer('embedsu');
-                    openToast("Server lagging. Auto-switched to Server 3.");
-                }
-            }, 8000);
+            if (externalLinkBtn) externalLinkBtn.href = url;
         }
 
         function closeModal(updateHash = true) {
             movieModal.classList.add('hidden');
             streamIframe.src = '';
-            if (serverFallbackTimeout) clearTimeout(serverFallbackTimeout);
             document.body.style.overflow = 'auto';
             currentActiveMovie = null;
 
