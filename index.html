@@ -194,30 +194,7 @@
                 </button>
             </div>
 
-            <!-- Streaming Server Switching Bar -->
-            <div class="bg-brand-dark px-6 py-2.5 border-b border-brand-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
-                <div class="flex items-center gap-2">
-                    <span class="text-gray-400 font-medium flex items-center gap-1.5">
-                        <i class="fa-solid fa-server text-brand-red"></i> Server: <span id="active-server-name" class="text-white font-bold">VidLink</span>
-                    </span>
-                </div>
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="switchServer('vidlink')" id="btn-server-vidlink" class="server-btn bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg transition-colors">
-                        Server 1 (VidLink)
-                    </button>
-                    <button onclick="switchServer('vidsrc')" id="btn-server-vidsrc" class="server-btn bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors">
-                        Server 2 (VidSrc)
-                    </button>
-                    <button onclick="switchServer('embedsu')" id="btn-server-embedsu" class="server-btn bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors">
-                        Server 3 (EmbedSu)
-                    </button>
-                    <a id="external-link-btn" href="#" target="_blank" class="bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
-                        <i class="fa-solid fa-external-link text-[10px]"></i> Open Native
-                    </a>
-                </div>
-            </div>
-
-            <!-- Video Player Embed Container -->
+            <!-- Video Player Embed Container (Using stable VidLink configuration) -->
             <div class="relative w-full aspect-video bg-black flex items-center justify-center shadow-2xl">
                 <iframe 
                     id="stream-iframe" 
@@ -255,7 +232,6 @@
 
         let currentActiveMovie = null;
         let loadedMoviesList = [];
-        let currentServer = 'vidlink';
 
         /* DOM References */
         const movieGrid = document.getElementById('movie-grid');
@@ -275,8 +251,6 @@
         const modalYear = document.getElementById('modal-year');
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
-        const activeServerName = document.getElementById('active-server-name');
-        const externalLinkBtn = document.getElementById('external-link-btn');
 
         /* Initialize Platform */
         window.addEventListener('DOMContentLoaded', () => {
@@ -458,44 +432,11 @@
             movieModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            switchServer('vidlink');
+            // Load stable VidLink stream
+            const tmdbId = movie.id;
+            streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
+
             executeAutomatedSeoEngine(movie);
-        }
-
-        function switchServer(serverName) {
-            currentServer = serverName;
-
-            ['vidlink', 'vidsrc', 'embedsu'].forEach(s => {
-                const btn = document.getElementById(`btn-server-${s}`);
-                if (s === serverName) {
-                    btn.className = "server-btn bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg transition-colors";
-                } else {
-                    btn.className = "server-btn bg-brand-border hover:bg-brand-hover text-gray-300 font-medium px-3 py-1.5 rounded-lg transition-colors";
-                }
-            });
-
-            if (serverName === 'vidlink') activeServerName.textContent = 'VidLink';
-            else if (serverName === 'vidsrc') activeServerName.textContent = 'VidSrc';
-            else if (serverName === 'embedsu') activeServerName.textContent = 'EmbedSu';
-
-            loadStreamForCurrentMovie();
-        }
-
-        function loadStreamForCurrentMovie() {
-            if (!currentActiveMovie) return;
-            const tmdbId = currentActiveMovie.id;
-            
-            let url = '';
-            if (currentServer === 'vidlink') {
-                url = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
-            } else if (currentServer === 'vidsrc') {
-                url = `https://vidsrc.cc/v2/embed/movie/${tmdbId}?autoPlay=true`;
-            } else if (currentServer === 'embedsu') {
-                url = `https://embed.su/embed/movie/${tmdbId}`;
-            }
-
-            streamIframe.src = url;
-            if (externalLinkBtn) externalLinkBtn.href = url;
         }
 
         function closeModal(updateHash = true) {
