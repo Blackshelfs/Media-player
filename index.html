@@ -61,19 +61,6 @@
 </head>
 <body class="bg-brand-dark text-gray-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-red selection:text-white">
 
-    <!-- TOP VPN AFFILIATE PROMOTIONAL BANNER (Monetization Engine) -->
-    <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-red-950 border-b border-white/10 px-4 py-2 text-xs">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-            <div class="flex items-center gap-2 text-gray-200 text-center sm:text-left">
-                <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-[10px] uppercase border border-emerald-500/30 shrink-0">Privacy Shield</span>
-                <span class="text-[11px] sm:text-xs">🛡️ Protect Your Privacy While Streaming — Avoid ISP Throttling & Stay Anonymous.</span>
-            </div>
-            <a href="javascript:void(0)" onclick="openToast('Redirecting to secure VPN partner...')" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1 rounded-lg text-[11px] transition flex items-center gap-1.5 shadow-md shrink-0">
-                <i class="fa-solid fa-shield-halved"></i> Get 70% Off CyberGuard VPN
-            </a>
-        </div>
-    </div>
-
     <!-- Header & Navigation -->
     <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur-xl border-b border-brand-border/80 px-4 sm:px-8 py-3.5">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -131,12 +118,10 @@
     <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-6">
         
         <!-- A-ADS AD UNIT BANNER (Top Catalog Placement) -->
-        <div class="mb-6 py-2">
-            <!-- BEGIN AADS AD UNIT 2459958 -->
-            <div style="width: 100%; margin: auto; position: relative; z-index: 10;">
-                <iframe data-aa='2459958' src='//acceptable.a-ads.com/2459958/?size=Adaptive' style='border:0; padding:0; width:70%; height:auto; overflow:hidden; display: block; margin: auto;'></iframe>
+        <div class="w-full my-4 flex justify-center items-center overflow-hidden">
+            <div id="frame" style="width: 100%; max-width: 728px; margin: auto; position: relative; z-index: 10;">
+                <iframe data-aa='2459958' src='https://acceptable.a-ads.com/2459958/?size=Adaptive' style='border:0; padding:0; width:100%; height:90px; overflow:hidden; display: block; margin: auto;'></iframe>
             </div>
-            <!-- END AADS AD UNIT 2459958 -->
         </div>
 
         <!-- Category Filter & Heading -->
@@ -225,12 +210,10 @@
                 </p>
 
                 <!-- A-ADS AD UNIT BANNER (Modal Player Placement) -->
-                <div class="pt-4 border-t border-brand-border">
-                    <!-- BEGIN AADS AD UNIT 2459958 -->
-                    <div style="width: 100%; margin: auto; position: relative; z-index: 10;">
-                        <iframe data-aa='2459958' src='//acceptable.a-ads.com/2459958/?size=Adaptive' style='border:0; padding:0; width:70%; height:auto; overflow:hidden; display: block; margin: auto;'></iframe>
+                <div class="w-full pt-4 border-t border-brand-border flex justify-center items-center overflow-hidden">
+                    <div style="width: 100%; max-width: 728px; margin: auto; position: relative; z-index: 10;">
+                        <iframe data-aa='2459958' src='https://acceptable.a-ads.com/2459958/?size=Adaptive' style='border:0; padding:0; width:100%; height:90px; overflow:hidden; display: block; margin: auto;'></iframe>
                     </div>
-                    <!-- END AADS AD UNIT 2459958 -->
                 </div>
             </div>
 
@@ -450,7 +433,6 @@
             movieModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            // Load stable VidLink stream
             const tmdbId = movie.id;
             streamIframe.src = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
 
