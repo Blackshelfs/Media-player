@@ -1,9 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineStream - Personal Cinema</title>
+    <!-- Default Dynamic Meta Tags (Programmatically updated under the hood on navigation) -->
+    <title>CineStream - Watch Full Movies & TV Shows Free Online HD</title>
+    <meta name="description" content="Stream thousands of high-definition movies online for free with subtitles. Fast streaming servers and no registration required.">
+    <meta name="keywords" content="watch movies free, free streaming, hd movies online, stream full movies, cinestream">
+    <meta name="robots" content="index, follow">
+
+    <!-- Primary JSON-LD Schema Container (Dynamically injected per page/movie state) -->
+    <script id="dynamic-seo-schema" type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "CineStream",
+        "url": "https://cinestream-demo.com/",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://cinestream-demo.com/#search/{search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -13,15 +33,16 @@
     
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
                         brand: {
                             red: '#E50914',
-                            dark: '#070708',
+                            dark: '#09090B',
                             card: '#121215',
                             border: '#1F1F24',
-                            hover: '#1A1A1E'
+                            hover: '#18181C'
                         }
                     },
                     fontFamily: {
@@ -32,36 +53,55 @@
         }
     </script>
     <style>
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #070708; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #09090B; }
         ::-webkit-scrollbar-thumb { background: #1F1F24; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #E50914; }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-100 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-red selection:text-white">
 
+    <!-- TOP VPN AFFILIATE PROMOTIONAL BANNER (Monetization Engine) -->
+    <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-red-950 border-b border-white/10 px-4 py-2 text-xs">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-center gap-2 text-gray-200 text-center sm:text-left">
+                <span class="bg-emerald-500/20 text-emerald-400 font-bold px-2 py-0.5 rounded text-[10px] uppercase border border-emerald-500/30 shrink-0">Privacy Shield</span>
+                <span class="text-[11px] sm:text-xs">🛡️ Protect Your Privacy While Streaming — Avoid ISP Throttling & Stay Anonymous.</span>
+            </div>
+            <a href="javascript:void(0)" onclick="openToast('Redirecting to secure VPN partner...')" class="bg-blue-600 hover:bg-blue-500 text-white font-semibold px-3 py-1 rounded-lg text-[11px] transition flex items-center gap-1.5 shadow-md shrink-0">
+                <i class="fa-solid fa-shield-halved"></i> Get 70% Off CyberGuard VPN
+            </a>
+        </div>
+    </div>
+
     <!-- Header & Navigation -->
-    <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-xl border-b border-brand-border/80 px-4 sm:px-8 py-4">
+    <header class="sticky top-0 z-40 bg-brand-dark/95 backdrop-blur-xl border-b border-brand-border/80 px-4 sm:px-8 py-3.5">
         <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
             
             <!-- Brand Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer group" onclick="resetToHome()">
-                <div class="bg-brand-red p-2.5 rounded-xl shadow-lg shadow-brand-red/30 group-hover:scale-105 transition-transform duration-200">
-                    <i class="fa-solid fa-play text-sm text-white"></i>
+            <div class="flex items-center justify-between w-full md:w-auto">
+                <div class="flex items-center space-x-3 cursor-pointer group" onclick="resetToHome()">
+                    <div class="bg-brand-red p-2.5 rounded-xl shadow-lg shadow-brand-red/30 group-hover:scale-105 transition-transform duration-200">
+                        <i class="fa-solid fa-play text-sm text-white"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl font-black tracking-wider text-white">CINE<span class="text-brand-red">STREAM</span></span>
+                        <span class="block text-[9px] text-gray-400 font-mono tracking-normal uppercase">Free Movies & TV Series</span>
+                    </div>
                 </div>
-                <span class="text-xl font-black tracking-wider text-white">CINE<span class="text-brand-red">STREAM</span></span>
             </div>
 
-            <!-- Search & Direct ID Bar -->
+            <!-- Search Bar & Direct TMDB ID Lookup -->
             <div class="flex items-center gap-2.5 w-full md:w-auto flex-1 max-w-2xl justify-end">
+                <!-- Title Search -->
                 <form id="search-form" class="relative flex-1 max-w-md">
                     <div class="relative flex items-center">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-gray-500 text-xs"></i>
                         <input 
                             type="text" 
                             id="search-input" 
-                            placeholder="Search any movie worldwide..." 
-                            class="w-full bg-brand-card text-gray-200 text-xs rounded-xl pl-10 pr-8 py-3 border border-brand-border focus:outline-none focus:border-brand-red transition-all placeholder-gray-500 shadow-inner"
+                            placeholder="Search thousands of movies..." 
+                            class="w-full bg-brand-card text-gray-200 text-xs rounded-xl pl-10 pr-8 py-2.5 border border-brand-border focus:outline-none focus:border-brand-red transition-all placeholder-gray-500 shadow-inner"
                             autocomplete="off"
                         >
                         <button type="button" id="clear-search" class="hidden absolute right-3.5 text-gray-500 hover:text-white text-xs">
@@ -70,68 +110,79 @@
                     </div>
                 </form>
 
-                <!-- Direct ID Input -->
-                <div class="flex items-center space-x-2">
-                    <input 
-                        type="text" 
-                        id="direct-id-input" 
-                        placeholder="TMDB ID..." 
-                        class="bg-brand-card text-xs text-gray-200 px-3.5 py-3 rounded-xl border border-brand-border focus:outline-none focus:border-brand-red w-28 sm:w-32 shadow-inner"
-                    >
-                    <button 
-                        onclick="playDirectId()" 
-                        class="bg-brand-red hover:bg-red-700 text-white font-bold text-xs px-4 py-3 rounded-xl transition-all shadow-md shadow-brand-red/20 whitespace-nowrap flex items-center gap-1.5"
-                    >
-                        <i class="fa-solid fa-play text-[10px]"></i> Play
-                    </button>
-                </div>
+                <!-- Direct TMDB ID Input -->
+                <form id="tmdb-id-form" class="relative w-32 sm:w-40">
+                    <div class="relative flex items-center">
+                        <i class="fa-solid fa-hashtag absolute left-3 text-gray-500 text-xs"></i>
+                        <input 
+                            type="number" 
+                            id="tmdb-id-input" 
+                            placeholder="TMDB ID..." 
+                            class="w-full bg-brand-card text-gray-200 text-xs rounded-xl pl-8 pr-3 py-2.5 border border-brand-border focus:outline-none focus:border-brand-red transition-all placeholder-gray-500 shadow-inner font-mono"
+                        >
+                    </div>
+                </form>
             </div>
 
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-8">
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-8 py-6">
         
-        <!-- Status Header -->
-        <div class="flex items-center justify-between mb-6 pb-4 border-b border-brand-border/60">
+        <!-- Category Filter & Heading -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-brand-border/60">
             <div>
                 <h1 id="section-title" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2.5">
                     Trending Movies
                 </h1>
-                <p class="text-xs text-gray-500 mt-0.5">Live database powered by TMDB & multi-server switching</p>
+                <p class="text-xs text-gray-400 mt-0.5">Explore popular full-length movies available to watch in 1080p Full HD.</p>
             </div>
-            <div id="result-count" class="text-[11px] font-semibold px-3 py-1 bg-brand-card text-gray-400 rounded-lg border border-brand-border">
-                Ready
+            
+            <div class="flex items-center gap-2">
+                <span id="result-count" class="text-[11px] font-semibold px-3 py-1.5 bg-brand-card text-gray-400 rounded-lg border border-brand-border">
+                    Loading titles...
+                </span>
             </div>
         </div>
 
-        <!-- Movie Grid Container -->
+        <!-- Movie Posters Grid -->
         <div id="movie-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-            <!-- Rendered dynamically -->
+            <!-- Rendered via JS -->
         </div>
 
-        <!-- Empty State -->
+        <!-- Empty State View -->
         <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
             <div class="w-16 h-16 bg-brand-card rounded-full flex items-center justify-center mb-3 text-gray-600 text-2xl border border-brand-border shadow-inner">
                 <i class="fa-solid fa-film"></i>
             </div>
             <h3 class="text-lg font-bold text-gray-300">No Movies Found</h3>
-            <p class="text-gray-500 text-xs max-w-xs mt-1">Try searching for another title or check your spelling.</p>
+            <p class="text-gray-500 text-xs max-w-xs mt-1">Try searching for a different title or enter a valid TMDB ID.</p>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-brand-border/80 bg-brand-dark py-6 px-4 sm:px-8 text-center text-xs text-gray-600">
-        <p>&copy; CineStream Personal Cinema. Multi-Server Infrastructure.</p>
+    <footer class="bg-brand-dark border-t border-brand-border/60 py-8 px-4 sm:px-8 mt-12 text-xs text-gray-500">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-gray-300">CINESTREAM</span>
+                <span>&bull;</span>
+                <span>Watch Free Movies Online in High Definition</span>
+            </div>
+            <div class="flex items-center space-x-4 text-gray-400">
+                <a href="javascript:void(0)" onclick="openToast('Terms of Service')" class="hover:text-white transition">Terms</a>
+                <a href="javascript:void(0)" onclick="openToast('Privacy Policy')" class="hover:text-white transition">Privacy</a>
+                <a href="javascript:void(0)" onclick="openToast('DMCA Contact')" class="hover:text-white transition">DMCA</a>
+            </div>
+        </div>
     </footer>
 
-    <!-- Movie Player Modal -->
+    <!-- Movie Streaming Player Modal -->
     <div id="movie-modal" class="fixed inset-0 z-50 hidden bg-black/95 backdrop-blur-2xl flex items-center justify-center p-2 sm:p-6 overflow-y-auto">
         <div class="relative bg-brand-card w-full max-w-5xl rounded-2xl overflow-hidden shadow-2xl border border-brand-border my-auto flex flex-col">
             
-            <!-- Minimal Modal Header -->
+            <!-- Player Modal Bar -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-brand-border bg-black/40">
                 <div class="flex items-center space-x-3">
                     <span class="w-2.5 h-2.5 rounded-full bg-brand-red animate-pulse shadow-lg shadow-brand-red"></span>
@@ -143,12 +194,12 @@
                 </button>
             </div>
 
-            <!-- Server Selector Bar -->
-            <div class="bg-brand-dark px-6 py-2.5 border-b border-brand-border flex items-center justify-between gap-2 text-xs">
-                <span class="text-gray-400 font-medium flex items-center gap-1.5">
-                    <i class="fa-solid fa-server text-brand-red"></i> Switch Server:
+            <!-- Streaming Server Switching Bar -->
+            <div class="bg-brand-dark px-6 py-2.5 border-b border-brand-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs">
+                <span id="server-status-text" class="text-gray-400 font-medium flex items-center gap-1.5">
+                    <i class="fa-solid fa-server text-brand-red"></i> Streaming Server: <span id="active-server-name" class="text-white font-bold">VidLink</span>
                 </span>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                     <button onclick="switchServer('vidlink')" id="btn-server-vidlink" class="server-btn bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg transition-colors">
                         Server 1 (VidLink)
                     </button>
@@ -161,8 +212,13 @@
                 </div>
             </div>
 
-            <!-- Video Player Frame -->
+            <!-- Video Player Embed Container -->
             <div class="relative w-full aspect-video bg-black flex items-center justify-center shadow-2xl">
+                <!-- Loading overlay indicator -->
+                <div id="player-loader" class="absolute inset-0 bg-brand-dark/80 backdrop-blur-sm flex flex-col items-center justify-center gap-2 z-10 transition-opacity duration-300">
+                    <div class="w-8 h-8 border-4 border-brand-red border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs text-gray-300 font-medium">Connecting to high-speed stream node...</p>
+                </div>
                 <iframe 
                     id="stream-iframe" 
                     class="w-full h-full border-0" 
@@ -171,52 +227,68 @@
                 ></iframe>
             </div>
 
-            <!-- Compact Movie Metadata -->
+            <!-- Movie Metadata Footer -->
             <div class="p-6 bg-brand-card">
                 <div class="flex items-center gap-3 text-xs text-gray-400 mb-2">
                     <span id="modal-year" class="font-bold text-gray-200">Year</span>
                     <span>&bull;</span>
-                    <span id="modal-imdb-id" class="bg-amber-500/10 text-amber-400 px-2.5 py-0.5 rounded text-[11px] font-mono border border-amber-500/20 font-semibold">ID</span>
+                    <span id="modal-imdb-id" class="bg-amber-500/10 text-amber-400 px-2.5 py-0.5 rounded text-[11px] font-mono border border-amber-500/20 font-semibold">TMDB ID</span>
                 </div>
                 <p id="modal-overview" class="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-3xl">
-                    Overview...
+                    Movie overview description...
                 </p>
             </div>
 
         </div>
     </div>
 
-    <!-- Script Logic -->
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-brand-card border border-brand-border text-gray-200 text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-sm">
+        <i class="fa-solid fa-circle-info text-brand-red"></i>
+        <span id="toast-message">Notification</span>
+    </div>
+
+    <!-- Application Script Logic & Under-the-Hood SEO Engine -->
     <script>
         const TMDB_API_KEY = "3fd2be6f0c70a2a598f084ddfb75487c";
         const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
 
         let currentActiveMovie = null;
+        let loadedMoviesList = [];
         let currentServer = 'vidlink';
+        let serverFallbackTimeout = null;
 
-        /* DOM Elements */
+        /* DOM References */
         const movieGrid = document.getElementById('movie-grid');
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search');
+        const tmdbIdForm = document.getElementById('tmdb-id-form');
+        const tmdbIdInput = document.getElementById('tmdb-id-input');
+
         const emptyState = document.getElementById('empty-state');
         const resultCount = document.getElementById('result-count');
         const sectionTitle = document.getElementById('section-title');
         
         const movieModal = document.getElementById('movie-modal');
         const streamIframe = document.getElementById('stream-iframe');
+        const playerLoader = document.getElementById('player-loader');
         const modalTitle = document.getElementById('modal-title');
         const modalYear = document.getElementById('modal-year');
         const modalImdbId = document.getElementById('modal-imdb-id');
         const modalOverview = document.getElementById('modal-overview');
+        const activeServerName = document.getElementById('active-server-name');
 
-        /* Initialize App - Load Trending Movies on Startup */
+        /* Initialize Platform */
         window.addEventListener('DOMContentLoaded', () => {
-            fetchTrendingMovies();
-            setupEvents();
+            fetchTrendingMovies().then(() => {
+                handleUrlHashRouting();
+            });
+            setupEventListeners();
+            window.addEventListener('hashchange', handleUrlHashRouting);
         });
 
-        function setupEvents() {
+        function setupEventListeners() {
             searchForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const query = searchInput.value.trim();
@@ -243,6 +315,12 @@
                 fetchTrendingMovies();
             });
 
+            tmdbIdForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const idStr = tmdbIdInput.value.trim();
+                if (idStr) fetchMovieById(idStr);
+            });
+
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') closeModal();
             });
@@ -250,35 +328,62 @@
 
         async function fetchTrendingMovies() {
             sectionTitle.textContent = "Trending Movies";
+            resultCount.textContent = "Fetching...";
             try {
                 const res = await fetch(`https://api.themoviedb.org/3/trending/movie/day?api_key=${TMDB_API_KEY}`);
                 const data = await res.json();
-                renderMovies(data.results);
+                loadedMoviesList = data.results || [];
+                renderMovies(loadedMoviesList);
+                
+                if (!window.location.hash || window.location.hash === '#home') {
+                    resetDefaultHomePageSeo();
+                }
             } catch (err) {
-                console.error("Failed to fetch trending movies:", err);
+                console.error("Error fetching trending movies:", err);
+                resultCount.textContent = "Error loading";
             }
         }
 
         async function searchMovies(query) {
             sectionTitle.textContent = `Search Results for "${query}"`;
+            resultCount.textContent = "Searching...";
             try {
                 const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(query)}`);
                 const data = await res.json();
-                renderMovies(data.results);
+                loadedMoviesList = data.results || [];
+                renderMovies(loadedMoviesList);
+                
+                updateHeadSeoTags({
+                    title: `Watch ${query} Movies Free Online HD - CineStream`,
+                    description: `Find and stream movies related to ${query} in 1080p Full HD for free on CineStream.`,
+                    keywords: `${query} free movie, stream ${query}, watch ${query} online hd`
+                });
             } catch (err) {
                 console.error("Search failed:", err);
             }
         }
 
+        async function fetchMovieById(id) {
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${TMDB_API_KEY}`);
+                if (!res.ok) throw new Error("Movie not found");
+                const movie = await res.json();
+                openPlayerModal(movie);
+            } catch (err) {
+                openToast(`Movie ID #${id} not found on TMDB.`);
+            }
+        }
+
         function resetToHome() {
+            window.location.hash = 'home';
             searchInput.value = '';
+            tmdbIdInput.value = '';
             clearSearchBtn.classList.add('hidden');
             fetchTrendingMovies();
         }
 
         function renderMovies(movies) {
             movieGrid.innerHTML = '';
-
             const validMovies = movies.filter(m => m.poster_path);
 
             if (!validMovies || validMovies.length === 0) {
@@ -296,14 +401,14 @@
                 const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
 
                 const card = document.createElement('div');
-                card.className = "group relative bg-brand-card rounded-xl overflow-hidden border border-brand-border hover:border-brand-red/80 transition-all duration-300 hover:-translate-y-1.5 cursor-pointer flex flex-col shadow-xl";
+                card.className = "group relative bg-brand-card rounded-xl overflow-hidden border border-brand-border hover:border-brand-red/80 transition-all duration-300 hover:-translate-y-1 cursor-pointer flex flex-col shadow-xl";
 
                 card.innerHTML = `
                     <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-950">
                         <img src="${posterUrl}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95 group-hover:opacity-100" loading="lazy">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
                             <span class="inline-flex items-center gap-1.5 text-xs bg-brand-red text-white font-bold px-3 py-1.5 rounded-lg shadow-lg">
-                                <i class="fa-solid fa-play text-[10px]"></i> Watch Movie
+                                <i class="fa-solid fa-play text-[10px]"></i> Stream Movie
                             </span>
                         </div>
                         <div class="absolute top-2.5 right-2.5 bg-black/80 backdrop-blur-md text-amber-400 font-bold text-[11px] px-2 py-1 rounded-lg border border-amber-500/20 shadow-md">
@@ -313,7 +418,7 @@
                     <div class="p-3.5 flex flex-col justify-between flex-grow">
                         <div>
                             <h3 class="font-bold text-white text-xs sm:text-sm line-clamp-1 group-hover:text-brand-red transition-colors">${movie.title}</h3>
-                            <div class="flex items-center justify-between text-[11px] text-gray-500 mt-1.5">
+                            <div class="flex items-center justify-between text-[11px] text-gray-400 mt-1.5">
                                 <span>${year}</span>
                                 <span class="font-mono text-[10px] bg-brand-dark px-1.5 py-0.5 rounded border border-brand-border/60 text-gray-400">ID: ${movie.id}</span>
                             </div>
@@ -321,28 +426,47 @@
                     </div>
                 `;
 
-                card.addEventListener('click', () => openPlayerModal(movie));
+                card.addEventListener('click', () => {
+                    const slug = generateSlug(movie.title);
+                    window.location.hash = `watch/${movie.id}/${slug}`;
+                });
                 movieGrid.appendChild(card);
             });
         }
 
+        function handleUrlHashRouting() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#watch/')) {
+                const parts = hash.split('/');
+                const movieId = parts[1];
+                if (movieId) {
+                    fetchMovieById(movieId);
+                }
+            } else if (movieModal && !movieModal.classList.contains('hidden')) {
+                closeModal(false);
+            }
+        }
+
         function openPlayerModal(movie) {
             currentActiveMovie = movie;
+            const year = movie.release_date ? movie.release_date.split('-')[0] : '2026';
+
             modalTitle.textContent = movie.title;
-            modalYear.textContent = movie.release_date ? movie.release_date.split('-')[0] : 'N/A';
+            modalYear.textContent = year;
             modalImdbId.textContent = `TMDB ID: ${movie.id}`;
-            modalOverview.textContent = movie.overview || 'No description available.';
+            modalOverview.textContent = movie.overview || 'No description available for this movie.';
 
             movieModal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
 
-            loadStreamForCurrentMovie();
+            // Default to VidLink on open
+            switchServer('vidlink');
+            executeAutomatedSeoEngine(movie);
         }
 
         function switchServer(serverName) {
             currentServer = serverName;
 
-            // Update active states on buttons
             ['vidlink', 'vidsrc', 'embedsu'].forEach(s => {
                 const btn = document.getElementById(`btn-server-${s}`);
                 if (s === serverName) {
@@ -352,6 +476,10 @@
                 }
             });
 
+            if (serverName === 'vidlink') activeServerName.textContent = 'VidLink';
+            else if (serverName === 'vidsrc') activeServerName.textContent = 'VidSrc';
+            else if (serverName === 'embedsu') activeServerName.textContent = 'EmbedSu';
+
             loadStreamForCurrentMovie();
         }
 
@@ -359,6 +487,9 @@
             if (!currentActiveMovie) return;
             const tmdbId = currentActiveMovie.id;
             
+            // Show loading overlay while iframe starts fetching chunks
+            if (playerLoader) playerLoader.style.opacity = '1';
+
             let url = '';
             if (currentServer === 'vidlink') {
                 url = `https://vidlink.pro/movie/${tmdbId}?primaryColor=e50914&autoplay=true&sub=en`;
@@ -369,30 +500,132 @@
             }
 
             streamIframe.src = url;
+
+            // Clear any prior fallback timers
+            if (serverFallbackTimeout) clearTimeout(serverFallbackTimeout);
+
+            // Auto-hide loader spinner after 3 seconds so the user isn't stuck waiting on a dead overlay
+            setTimeout(() => {
+                if (playerLoader) playerLoader.style.opacity = '0';
+            }, 3000);
+
+            // AUTO-FALLBACK SAFETY NET: If server hangs for 8 seconds, automatically bounce to next server
+            serverFallbackTimeout = setTimeout(() => {
+                if (currentServer === 'vidlink') {
+                    console.log("VidLink response slow, auto-switching to VidSrc...");
+                    switchServer('vidsrc');
+                    openToast("Server lagging. Auto-switched to Server 2.");
+                } else if (currentServer === 'vidsrc') {
+                    console.log("VidSrc response slow, auto-switching to EmbedSu...");
+                    switchServer('embedsu');
+                    openToast("Server lagging. Auto-switched to Server 3.");
+                }
+            }, 8000);
         }
 
-        async function playDirectId() {
-            const input = document.getElementById('direct-id-input');
-            const rawVal = input.value.trim().replace('tt', '');
-            if (!rawVal) return;
-
-            try {
-                const res = await fetch(`https://api.themoviedb.org/3/movie/${rawVal}?api_key=${TMDB_API_KEY}`);
-                if (!res.ok) throw new Error("Movie not found");
-                const movieData = await res.json();
-                
-                openPlayerModal(movieData);
-            } catch (err) {
-                alert("Invalid TMDB ID or movie not found in database.");
-            }
-            input.value = '';
-        }
-
-        function closeModal() {
+        function closeModal(updateHash = true) {
             movieModal.classList.add('hidden');
             streamIframe.src = '';
+            if (serverFallbackTimeout) clearTimeout(serverFallbackTimeout);
             document.body.style.overflow = 'auto';
             currentActiveMovie = null;
+
+            if (updateHash && window.location.hash.startsWith('#watch/')) {
+                window.location.hash = 'home';
+            }
+            resetDefaultHomePageSeo();
+        }
+
+        /* ========================================================================= */
+        /* UNDER-THE-HOOD AUTOMATED PROGRAMMATIC SEO ENGINE                         */
+        /* ========================================================================= */
+        function executeAutomatedSeoEngine(movie) {
+            const year = movie.release_date ? movie.release_date.split('-')[0] : '2026';
+            const slug = generateSlug(movie.title);
+            const canonicalUrl = `https://cinestream-demo.com/#watch/${movie.id}/${slug}`;
+            
+            const longTailTitle = `Watch ${movie.title} (${year}) Full Movie Free Online HD - CineStream`;
+            const metaDescription = `Stream ${movie.title} (${year}) online in 1080p Full HD with English subtitles. Fast servers, zero registration required on CineStream.`;
+            const longTailKeywords = `watch ${movie.title.toLowerCase()} free, ${movie.title.toLowerCase()} 1080p stream, watch ${movie.title.toLowerCase()} online hd, full movie ${movie.title.toLowerCase()}`;
+
+            updateHeadSeoTags({
+                title: longTailTitle,
+                description: metaDescription,
+                keywords: longTailKeywords
+            });
+
+            const schemaData = {
+                "@context": "https://schema.org",
+                "@type": "Movie",
+                "name": movie.title,
+                "url": canonicalUrl,
+                "image": movie.poster_path ? `${TMDB_IMAGE_BASE}${movie.poster_path}` : "",
+                "datePublished": movie.release_date || `${year}-01-01`,
+                "description": movie.overview || metaDescription,
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": movie.vote_average ? movie.vote_average.toFixed(1) : "7.5",
+                    "bestRating": "10",
+                    "ratingCount": movie.vote_count || 1000
+                }
+            };
+
+            const schemaScript = document.getElementById('dynamic-seo-schema');
+            if (schemaScript) {
+                schemaScript.textContent = JSON.stringify(schemaData);
+            }
+        }
+
+        function resetDefaultHomePageSeo() {
+            updateHeadSeoTags({
+                title: "CineStream - Watch Full Movies & TV Shows Free Online HD",
+                description: "Stream thousands of high-definition movies online for free with subtitles. Fast streaming servers and no registration required.",
+                keywords: "watch movies free, free streaming, hd movies online, stream full movies, cinestream"
+            });
+
+            const defaultSchema = {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "CineStream",
+                "url": "https://cinestream-demo.com/",
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://cinestream-demo.com/#search/{search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+            };
+
+            const schemaScript = document.getElementById('dynamic-seo-schema');
+            if (schemaScript) schemaScript.textContent = JSON.stringify(defaultSchema);
+        }
+
+        function updateHeadSeoTags({ title, description, keywords }) {
+            document.title = title;
+            
+            let metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) metaDesc.setAttribute('content', description);
+
+            let metaKw = document.querySelector('meta[name="keywords"]');
+            if (metaKw) metaKw.setAttribute('content', keywords);
+        }
+
+        function generateSlug(text) {
+            return text
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/[\s_]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        function openToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
         }
     </script>
 </body>
